@@ -139,28 +139,67 @@ function showPersonal(){
   box.scrollIntoView({behavior:"smooth",block:"start"});
 }
 
-function parseTeam(){
-  const raw=document.getElementById("teamInput").value.toUpperCase();
-  return raw.split(/[\s,;/]+/).map(x=>x.trim()).filter(Boolean);
-}
-function validType(x){return /^[EI][SN][TF][JP]$/.test(x)}
+const teamCounts = {};
 
-function analyzeTeam(){
-  const items=parseTeam();
-  const box=document.getElementById("teamResult");
-  const invalid=items.filter(x=>!validType(x));
-  const valid=items.filter(validType);
-  box.classList.remove("hidden");
-  if(valid.length===0){
-    box.innerHTML=`<div class="error">유효한 MBTI를 1개 이상 입력해주세요. 예: ISTJ, ENFP</div>`;
+function getTeamTotal(){
+  return Object.values(teamCounts).reduce((sum,n)=>sum+n,0);
+}
+
+function updateTeamRows(){
+  const rows=document.getElementById("teamTypeRows");
+  const total=getTeamTotal();
+  document.getElementById("teamTotal").textContent=`총 ${total}명`;
+
+  const entries=Object.entries(teamCounts).filter(([,n])=>n>0);
+  if(entries.length===0){
+    rows.innerHTML=`<div class="team-empty">아직 입력된 팀원이 없습니다.</div>`;
     return;
   }
+
+  const order=Object.keys(typeInfo);
+  entries.sort((a,b)=>order.indexOf(a[0])-order.indexOf(b[0]));
+  rows.innerHTML=entries.map(([type,count])=>`
+    <div class="team-type-row" data-type="${type}">
+      <div class="team-type-name">${type}</div>
+      <div class="team-type-meta">${typeInfo[type].name}</div>
+      <div class="counter">
+        <button type="button" data-action="minus" aria-label="${type} 인원 감소">−</button>
+        <span class="count">${count}</span>
+        <button type="button" data-action="plus" aria-label="${type} 인원 증가">+</button>
+        <button type="button" class="remove-type" data-action="remove" aria-label="${type} 삭제">×</button>
+      </div>
+    </div>`).join("");
+}
+
+function addSelectedTeamType(){
+  const type=document.getElementById("teamTypeSelect").value;
+  teamCounts[type]=(teamCounts[type]||0)+1;
+  updateTeamRows();
+}
+
+function changeTeamCount(type,delta){
+  const next=(teamCounts[type]||0)+delta;
+  if(next<=0) delete teamCounts[type];
+  else teamCounts[type]=next;
+  updateTeamRows();
+}
+
+function analyzeTeam(){
+  const box=document.getElementById("teamResult");
+  const total=getTeamTotal();
+  box.classList.remove("hidden");
+  if(total===0){
+    box.innerHTML=`<div class="error">팀원 MBTI를 1명 이상 입력해주세요.</div>`;
+    return;
+  }
+
   const counts={E:0,I:0,S:0,N:0,T:0,F:0,J:0,P:0};
   const tempCounts={SJ:0,SP:0,NT:0,NF:0};
-  valid.forEach(t=>{
-    [...t].forEach(ch=>counts[ch]++);
-    tempCounts[getTemperament(t)]++;
+  Object.entries(teamCounts).forEach(([type,n])=>{
+    [...type].forEach(ch=>counts[ch]+=n);
+    tempCounts[getTemperament(type)]+=n;
   });
+
   const teamType =
     (counts.E>counts.I?"E":"I")+
     (counts.S>counts.N?"S":"N")+
@@ -168,14 +207,19 @@ function analyzeTeam(){
     (counts.J>counts.P?"J":"P");
   const topTemp=Object.entries(tempCounts).sort((a,b)=>b[1]-a[1])[0][0];
   const info=typeInfo[teamType], tinfo=temperamentInfo[topTemp];
-  const dist=Object.entries(tempCounts).sort((a,b)=>b[1]-a[1]).map(([k,v])=>`${k} ${Math.round(v/valid.length*100)}%`).join(" · ");
+  const dist=Object.entries(tempCounts).sort((a,b)=>b[1]-a[1]).map(([k,v])=>`${k} ${Math.round(v/total*100)}%`).join(" · ");
+  const composition=Object.entries(teamCounts)
+    .filter(([,n])=>n>0)
+    .sort((a,b)=>b[1]-a[1] || a[0].localeCompare(b[0]))
+    .map(([t,n])=>`${t} ${n}명`).join(" · ");
 
   box.innerHTML=`
     <div class="result-top">
       <div class="type-badge">${teamType}</div>
       <div class="result-title">
         <h3>우리 팀 대표 MBTI · ${info.name}</h3>
-        <p>${valid.length}명의 입력 결과를 지표별로 합산해 계산했습니다.${invalid.length?` (무효 입력 ${invalid.length}개 제외)`:``}</p>
+        <p>총 ${total}명의 결과를 지표별로 합산해 계산했습니다.</p>
+        <div style="margin-top:8px;font-size:12px;color:var(--muted)">구성 · ${composition}</div>
       </div>
     </div>
     ${axisHtml(counts)}
@@ -220,13 +264,29 @@ document.getElementById("resetPersonal").onclick=()=>{
   document.getElementById("personalResult").classList.add("hidden");
   updateProgress();
 };
+document.getElementById("addTeamType").onclick=addSelectedTeamType;
+document.getElementById("teamTypeRows").onclick=(e)=>{
+  const btn=e.target.closest("button[data-action]");
+  if(!btn) return;
+  const row=btn.closest(".team-type-row");
+  if(!row) return;
+  const type=row.dataset.type;
+  if(btn.dataset.action==="plus") changeTeamCount(type,1);
+  if(btn.dataset.action==="minus") changeTeamCount(type,-1);
+  if(btn.dataset.action==="remove"){ delete teamCounts[type]; updateTeamRows(); }
+};
 document.getElementById("analyzeTeam").onclick=analyzeTeam;
 document.getElementById("sampleTeam").onclick=()=>{
-  document.getElementById("teamInput").value="ISTJ\nISTJ\nINTJ\nESTJ\nISFJ\nISTJ\nENTJ\nISFJ";
+  Object.keys(teamCounts).forEach(k=>delete teamCounts[k]);
+  Object.assign(teamCounts,{ISTJ:3,INTJ:1,ESTJ:1,ISFJ:2,ENTJ:1});
+  updateTeamRows();
+  document.getElementById("teamResult").classList.add("hidden");
 };
 document.getElementById("clearTeam").onclick=()=>{
-  document.getElementById("teamInput").value="";
+  Object.keys(teamCounts).forEach(k=>delete teamCounts[k]);
+  updateTeamRows();
   document.getElementById("teamResult").classList.add("hidden");
 };
 
 renderQuiz();
+updateTeamRows();
