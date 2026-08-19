@@ -68,3 +68,6 @@
 [v0.7 변경]
 - 히어로 우측 K 모티프를 래스터 PNG에서 inline SVG 벡터로 변경
 - 확대/고해상도/모바일 화면에서도 깨짐 없이 렌더링
+
+
+[v0.8] Hero graphic corrected to use the actual The-K K silhouette as a clipped CI template motif.
