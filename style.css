@@ -103,8 +103,13 @@ button{cursor:pointer}
   box-shadow:0 18px 42px rgba(33,64,154,.18);
 }
 .hero::before{
-  content:"";position:absolute;right:-80px;top:-130px;width:390px;height:390px;
-  border:78px solid rgba(255,255,255,.06);transform:rotate(45deg);border-radius:54px;
+  /* The-K CI manual Template System: use the actual K arm (〈) motif, not a generic geometric shape. */
+  content:"";position:absolute;right:-12px;top:-70px;width:360px;height:520px;
+  background:url("./assets/the-k-chevron.png") center/contain no-repeat;
+  opacity:.085;
+  transform:none;
+  border:0;border-radius:0;
+  pointer-events:none;
 }
 .hero::after{
   content:"";position:absolute;left:0;bottom:0;width:150px;height:7px;background:var(--red);
@@ -331,7 +336,7 @@ footer{
   .hero{padding:40px 26px;min-height:auto;border-radius:18px}
   .hero h2{font-size:34px}
   .hero p{white-space:normal;max-width:none}
-  .hero::before{right:-190px;top:-170px}
+  .hero::before{width:270px;height:390px;right:-105px;top:-42px;opacity:.075}
   .steps{grid-template-columns:repeat(2,1fr)}
   .grid.three,.improve-flow,.dual{grid-template-columns:1fr}
   .options{grid-template-columns:1fr}
