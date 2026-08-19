@@ -58,16 +58,7 @@
 - 외부 Google Fonts/CDN 사용 없음
 
 
-## v0.7 변경사항
-- CI 매뉴얼 Template System(1.22)에 맞춰 히어로 우측의 임의 마름모 그래픽 제거
-- 공식 The-K 로고 K의 오른쪽 〈 형태를 추출한 배경 모티프 적용
-- 데스크톱/모바일에서 K 모티프가 과도하지 않게 크롭·배치되도록 반응형 조정
-- 푸터 버전 표기를 v0.7으로 정리
-
-
-[v0.7 변경]
-- 히어로 우측 K 모티프를 래스터 PNG에서 inline SVG 벡터로 변경
-- 확대/고해상도/모바일 화면에서도 깨짐 없이 렌더링
-
-
-[v0.8] Hero graphic corrected to use the actual The-K K silhouette as a clipped CI template motif.
+## v0.5.1 변경사항
+- v0.5 기준 유지
+- 메인 파란색 히어로 영역의 마름모 장식 제거
+- 히어로 배경을 The-K Blue 단색으로 통일
