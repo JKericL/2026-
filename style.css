@@ -342,6 +342,7 @@ footer{
   .team-picker{grid-template-columns:1fr}
   .team-type-row{grid-template-columns:72px 1fr auto;gap:8px}
   .team-type-meta{display:none}
+<<<<<<< HEAD
 }
 
 
@@ -435,4 +436,6 @@ footer{
   .options-three .option{min-height:70px;padding:14px}
   .quiz-nav{align-items:stretch}
   .quiz-nav-right{margin-left:auto}
+=======
+>>>>>>> b031425ee1f860dd64bd18ec49ee8bede6c33b92
 }
