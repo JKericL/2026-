@@ -1,24 +1,112 @@
 
 const questions = [
-  {axis:"EI", q:"새로운 업무를 맡았을 때 나는", a:"주변 사람들과 먼저 이야기하며 방향을 잡는다.", b:"혼자 자료를 살펴보고 생각을 정리한 뒤 이야기한다."},
-  {axis:"EI", q:"회의에서 의견을 정리할 때 나는", a:"말하면서 생각이 정리되는 편이다.", b:"생각을 충분히 정리한 뒤 발언하는 편이다."},
-  {axis:"EI", q:"협업이 필요한 업무에서는", a:"자주 소통하며 진행상황을 맞추는 편이 편하다.", b:"각자 맡은 부분을 집중해 처리한 뒤 맞추는 편이 편하다."},
-  {axis:"EI", q:"바쁜 날 에너지를 회복하는 방법은", a:"동료들과 대화하거나 함께 쉬는 것이다.", b:"혼자 조용히 쉬거나 내 일에 집중하는 것이다."},
+  // E / I : 외부 자극·상호작용을 통한 에너지/사고 정리 vs 내부 숙고 후 상호작용
+  {axis:"EI", q:"회의에서 잠시 침묵이 흐를 때 나는?", options:[
+    {text:"먼저 의견을 꺼내며 논의를 시작하는 편이다.", score:2},
+    {text:"상황을 보다가 필요한 시점에 의견을 보탠다.", score:0},
+    {text:"다른 의견을 충분히 들은 뒤 생각을 정리해 말하는 편이다.", score:-2}
+  ], tie:1},
+  {axis:"EI", q:"협업이 필요한 업무를 진행할 때 나는?", options:[
+    {text:"각자 맡은 부분에 집중한 뒤 정해진 시점에 공유하는 편이 편하다.", score:-2},
+    {text:"중요한 단계마다 필요한 만큼 소통하는 편이다.", score:0},
+    {text:"자주 대화하며 진행상황과 생각을 맞추는 편이 편하다.", score:2}
+  ]},
+  {axis:"EI", q:"엘리베이터에서 잘 모르는 타부서 직원과 단둘이 마주쳤다면?", options:[
+    {text:"가볍게 인사한 뒤 조용히 이동하는 편이다.", score:-2},
+    {text:"상대가 말을 걸거나 자연스러운 계기가 있으면 대화한다.", score:0},
+    {text:"먼저 가벼운 주제로 말을 건네는 편이다.", score:2}
+  ]},
+  {axis:"EI", q:"업무 스트레스가 쌓였을 때 나는?", options:[
+    {text:"동료와 이야기하면서 생각과 감정을 풀어내는 편이다.", score:2},
+    {text:"필요한 부분만 짧게 공유하며 정리한다.", score:0},
+    {text:"혼자 시간을 가지며 생각을 정리하는 편이다.", score:-2}
+  ]},
+  {axis:"EI", q:"처음 맡아보는 업무의 방향을 잡을 때 나는?", options:[
+    {text:"자료를 충분히 살펴보고 내 생각을 정리한 뒤 의견을 구한다.", score:-2},
+    {text:"자료 확인과 주변 의견 청취를 병행한다.", score:0},
+    {text:"관련된 사람들과 먼저 이야기하며 방향을 구체화한다.", score:2}
+  ]},
 
-  {axis:"SN", q:"업무 자료를 검토할 때 먼저 보는 것은", a:"기존 사례, 수치, 구체적인 사실이다.", b:"전체 방향, 의미, 새로운 가능성이다."},
-  {axis:"SN", q:"업무 개선안을 생각할 때 나는", a:"현재 방식에서 현실적으로 바꿀 수 있는 부분을 찾는다.", b:"기존 방식과 달라도 더 나은 구조를 상상해본다."},
-  {axis:"SN", q:"업무 설명을 들을 때 이해가 잘 되는 방식은", a:"구체적인 사례와 순서를 듣는 것이다.", b:"전체 목적과 개념을 먼저 듣는 것이다."},
-  {axis:"SN", q:"새 제도나 시스템을 접하면", a:"검증된 사용법과 기준부터 확인한다.", b:"새롭게 활용할 수 있는 방법부터 떠올린다."},
+  // S / N : 구체·사실·경험 vs 의미·가능성·전체 맥락
+  {axis:"SN", q:"업무 인수인계를 받을 때 가장 도움이 되는 방식은?", options:[
+    {text:"업무의 목적과 배경, 전체 흐름을 먼저 설명해 주는 방식", score:-2},
+    {text:"기본 가이드와 실제 예시를 함께 보여주는 방식", score:0},
+    {text:"처리 순서와 세부사항이 정리된 상세 매뉴얼", score:2}
+  ], tie:1},
+  {axis:"SN", q:"보고서를 작성할 때 상대적으로 더 신경 쓰는 부분은?", options:[
+    {text:"정확한 수치, 근거자료, 세부 오류와 형식", score:2},
+    {text:"구체적인 내용과 전체 메시지의 균형", score:0},
+    {text:"전체적인 맥락, 핵심 메시지와 향후 방향", score:-2}
+  ]},
+  {axis:"SN", q:"새로운 아이디어를 요청받았을 때 나는?", options:[
+    {text:"기존 방식과 다른 가능성을 폭넓게 떠올려본다.", score:-2},
+    {text:"기존 방식에 새로운 요소를 더해본다.", score:0},
+    {text:"과거 사례와 검증된 레퍼런스부터 찾아본다.", score:2}
+  ]},
+  {axis:"SN", q:"회의에서 현실성이 아직 불확실한 아이디어가 나왔다면?", options:[
+    {text:"예산·인력·일정 등 실행 조건부터 확인한다.", score:2},
+    {text:"아이디어의 장점과 실행 가능성을 함께 검토한다.", score:0},
+    {text:"당장 제약보다 아이디어가 열어줄 가능성을 먼저 살펴본다.", score:-2}
+  ]},
+  {axis:"SN", q:"복잡한 업무 설명을 들을 때 이해가 가장 잘 되는 방식은?", options:[
+    {text:"전체 목적과 구조를 먼저 이해한 뒤 세부내용을 보는 방식", score:-2},
+    {text:"전체 개요와 구체적인 예시를 함께 듣는 방식", score:0},
+    {text:"실제 사례와 단계별 처리방법부터 확인하는 방식", score:2}
+  ]},
 
-  {axis:"TF", q:"의사결정을 할 때 상대적으로 더 중요하게 보는 것은", a:"논리, 기준, 효율성이다.", b:"구성원에게 미칠 영향과 수용성이다."},
-  {axis:"TF", q:"동료의 업무 오류를 발견하면", a:"무엇이 잘못됐는지 정확히 짚는 것이 우선이다.", b:"상대가 받아들이기 쉽게 전달하는 것이 우선이다."},
-  {axis:"TF", q:"의견이 충돌할 때 나는", a:"어느 주장이 더 타당한지 따져본다.", b:"서로 납득할 수 있는 접점을 먼저 찾는다."},
-  {axis:"TF", q:"업무를 평가할 때 상대적으로 더 중요하게 보는 것은", a:"결과와 기준 충족 여부다.", b:"과정과 협업에 기여한 정도다."},
+  // T / F : 기준·논리·결과 vs 관계·수용성·사람에 미치는 영향
+  {axis:"TF", q:"동료가 업무상 큰 실수를 해 많이 위축되어 있다면?", options:[
+    {text:"우선 상황을 함께 정리하고 재발 방지 방법을 제안한다.", score:2},
+    {text:"상황을 듣고 필요한 조언과 격려를 함께 전한다.", score:0},
+    {text:"상대의 상태와 감정을 먼저 살피고 안심시키는 편이다.", score:-2}
+  ], tie:1},
+  {axis:"TF", q:"상사에게 피드백을 받을 때 더 만족스러운 것은?", options:[
+    {text:"노력한 과정과 성장한 부분을 인정해 주는 피드백", score:-2},
+    {text:"잘한 점과 보완할 점을 균형 있게 알려주는 피드백", score:0},
+    {text:"성과와 논리, 개선할 부분을 명확하게 짚어주는 피드백", score:2}
+  ]},
+  {axis:"TF", q:"기준이나 원칙에 맞지 않는 지시를 받았을 때 나는?", options:[
+    {text:"근거와 기준을 확인해 논리적으로 이견을 제시한다.", score:2},
+    {text:"상황과 관계를 고려해 적절한 방식으로 의견을 전달한다.", score:0},
+    {text:"상대가 불편하지 않도록 표현과 관계를 특히 신경 쓴다.", score:-2}
+  ]},
+  {axis:"TF", q:"업무 메일을 작성할 때 나의 스타일은?", options:[
+    {text:"상대가 어떻게 받아들일지 고려해 인사와 완곡한 표현을 충분히 넣는다.", score:-2},
+    {text:"기본적인 인사와 필요한 설명을 넣어 작성한다.", score:0},
+    {text:"핵심 내용과 요청사항이 명확하게 보이도록 간결하게 작성한다.", score:2}
+  ]},
+  {axis:"TF", q:"팀원을 평가해야 한다면 상대적으로 더 중요하게 보는 것은?", options:[
+    {text:"성과와 객관적인 기준의 충족 여부", score:2},
+    {text:"결과와 과정, 협업을 균형 있게 고려", score:0},
+    {text:"팀워크, 노력과 구성원이 처한 상황까지 폭넓게 고려", score:-2}
+  ]},
 
-  {axis:"JP", q:"업무를 시작할 때 나는", a:"일정과 순서를 미리 정해두는 편이다.", b:"일단 시작하고 상황에 따라 조정하는 편이다."},
-  {axis:"JP", q:"마감이 있는 업무에서는", a:"가능하면 여유 있게 끝내두는 편이다.", b:"마감 전까지 수정 가능성을 열어두는 편이다."},
-  {axis:"JP", q:"예정에 없던 일이 생기면", a:"기존 계획이 흐트러지는 것이 다소 불편하다.", b:"필요하면 계획을 바꾸는 것이 크게 어렵지 않다."},
-  {axis:"JP", q:"업무 방식은", a:"기준과 절차가 명확할수록 편하다.", b:"상황에 맞게 선택할 여지가 있을수록 편하다."}
+  // J / P : 계획·구조·마감관리 vs 유연·탐색·상황대응
+  {axis:"JP", q:"마감 3일 전, 나의 업무 상태에 가장 가까운 것은?", options:[
+    {text:"주요 작업은 거의 마치고 검토·보완 중이다.", score:2},
+    {text:"큰 틀은 잡혔고 남은 작업을 집중해서 진행 중이다.", score:0},
+    {text:"방향은 알고 있으며 마감이 가까워질수록 집중도가 높아지는 편이다.", score:-2}
+  ], tie:1},
+  {axis:"JP", q:"예정에 없던 긴급 업무로 오늘 계획이 틀어졌다면?", options:[
+    {text:"우선 상황에 맞춰 움직이고 이후 일정을 다시 생각한다.", score:-2},
+    {text:"우선순위를 다시 정해 필요한 만큼 계획을 조정한다.", score:0},
+    {text:"기존 일정에 미칠 영향을 먼저 계산하고 계획표를 다시 정리한다.", score:2}
+  ]},
+  {axis:"JP", q:"새로운 업무를 시작할 때 나는?", options:[
+    {text:"먼저 시작해보면서 필요한 순서와 방법을 잡아간다.", score:-2},
+    {text:"큰 일정과 방향을 정한 뒤 세부사항은 진행하며 조정한다.", score:0},
+    {text:"일정과 처리 순서를 구체적으로 정한 뒤 시작한다.", score:2}
+  ]},
+  {axis:"JP", q:"새로운 업무 툴을 도입하게 되었다면?", options:[
+    {text:"매뉴얼과 사용법을 먼저 충분히 확인한다.", score:2},
+    {text:"핵심 기능과 예시를 확인한 뒤 사용해본다.", score:0},
+    {text:"일단 직접 사용해보면서 필요한 기능을 익힌다.", score:-2}
+  ]},
+  {axis:"JP", q:"오늘 해야 할 일을 관리하는 방식은?", options:[
+    {text:"그날 상황과 우선순위에 따라 머릿속에서 유연하게 조정한다.", score:-2},
+    {text:"중요한 일 위주로 간단히 메모해 관리한다.", score:0},
+    {text:"할 일을 목록화하고 우선순위나 순서를 정해 관리한다.", score:2}
+  ]}
 ];
 
 const typeInfo = {
@@ -55,40 +143,108 @@ function getTemperament(type){
   return "NF";
 }
 
+
+let currentQuestion = 0;
+const personalAnswers = Array(questions.length).fill(null);
+
 function renderQuiz(){
-  const quiz=document.getElementById("quiz");
-  quiz.innerHTML=questions.map((x,i)=>`
-    <div class="question">
-      <div class="qtitle"><span class="qnum">${String(i+1).padStart(2,"0")}</span>${x.q}</div>
-      <div class="options">
-        <label class="option"><input type="radio" name="q${i}" value="A"> ${x.a}</label>
-        <label class="option"><input type="radio" name="q${i}" value="B"> ${x.b}</label>
+  const quiz = document.getElementById("quiz");
+  const x = questions[currentQuestion];
+  const selected = personalAnswers[currentQuestion];
+
+  quiz.innerHTML = `
+    <div class="question question-single">
+      <div class="question-meta">
+        <span class="qnum">${String(currentQuestion+1).padStart(2,"0")}</span>
+        <span class="question-count">${currentQuestion+1} / ${questions.length}</span>
       </div>
-    </div>`).join("");
-  quiz.addEventListener("change",updateProgress);
+      <div class="qtitle">${x.q}</div>
+      <div class="options options-three">
+        ${x.options.map((opt,idx)=>`
+          <label class="option ${selected===idx ? "selected" : ""}">
+            <input type="radio" name="currentQuestion" value="${idx}" ${selected===idx ? "checked" : ""}>
+            <span class="option-index">${idx+1}</span>
+            <span>${opt.text}</span>
+          </label>
+        `).join("")}
+      </div>
+    </div>`;
+
+  quiz.querySelectorAll('input[name="currentQuestion"]').forEach(input=>{
+    input.addEventListener("change",()=>{
+      personalAnswers[currentQuestion] = Number(input.value);
+      renderQuiz();
+      updateProgress();
+    });
+  });
+
+  document.getElementById("prevQuestion").disabled = currentQuestion === 0;
+  const next = document.getElementById("nextQuestion");
+  next.textContent = currentQuestion === questions.length-1 ? "결과 확인" : "다음";
+  updateProgress();
 }
 
 function updateProgress(){
-  const answered=questions.filter((_,i)=>document.querySelector(`input[name=q${i}]:checked`)).length;
-  document.getElementById("progressText").textContent=`${answered} / ${questions.length}`;
-  document.getElementById("progressBar").style.width=`${answered/questions.length*100}%`;
+  const answered = personalAnswers.filter(v=>v!==null).length;
+  document.getElementById("progressText").textContent = `${currentQuestion+1} / ${questions.length} · ${answered}개 응답`;
+  document.getElementById("progressBar").style.width = `${((currentQuestion+1)/questions.length)*100}%`;
+}
+
+function getAxisTotals(){
+  const totals={EI:0,SN:0,TF:0,JP:0};
+  const counts={EI:0,SN:0,TF:0,JP:0};
+  questions.forEach((q,i)=>{
+    const answerIndex = personalAnswers[i];
+    if(answerIndex===null) return;
+    totals[q.axis] += q.options[answerIndex].score;
+    counts[q.axis] += 1;
+  });
+  return {totals,counts};
+}
+
+function resolveAxis(axis, first, second, total){
+  if(total>0) return first;
+  if(total<0) return second;
+
+  // 50:50 동률이면 해당 축의 핵심문항(tie)을 우선 반영.
+  const axisIndexes = questions
+    .map((q,i)=>({q,i}))
+    .filter(x=>x.q.axis===axis)
+    .sort((a,b)=>(b.q.tie?1:0)-(a.q.tie?1:0));
+
+  for(const {q,i} of axisIndexes){
+    const answerIndex=personalAnswers[i];
+    if(answerIndex===null) continue;
+    const score=q.options[answerIndex].score;
+    if(score>0) return first;
+    if(score<0) return second;
+  }
+  return first;
+}
+
+function personalScoreObject(){
+  const {totals}=getAxisTotals();
+  const scoreObj={E:0,I:0,S:0,N:0,T:0,F:0,J:0,P:0};
+
+  [["EI","E","I"],["SN","S","N"],["TF","T","F"],["JP","J","P"]].forEach(([axis,first,second])=>{
+    const max=questions.filter(q=>q.axis===axis).length*2;
+    const firstPct=Math.round(((totals[axis]+max)/(2*max))*100);
+    const secondPct=100-firstPct;
+    scoreObj[first]=firstPct;
+    scoreObj[second]=secondPct;
+  });
+  return {scoreObj, totals};
 }
 
 function calcType(){
-  const scores={E:0,I:0,S:0,N:0,T:0,F:0,J:0,P:0};
-  for(let i=0;i<questions.length;i++){
-    const sel=document.querySelector(`input[name=q${i}]:checked`);
-    if(!sel) return null;
-    const axis=questions[i].axis;
-    const letters=axis.split("");
-    scores[sel.value==="A"?letters[0]:letters[1]]++;
-  }
+  if(personalAnswers.some(v=>v===null)) return null;
+  const {scoreObj,totals}=personalScoreObject();
   const type =
-    (scores.E>=scores.I?"E":"I")+
-    (scores.S>=scores.N?"S":"N")+
-    (scores.T>=scores.F?"T":"F")+
-    (scores.J>=scores.P?"J":"P");
-  return {type,scores};
+    resolveAxis("EI","E","I",totals.EI)+
+    resolveAxis("SN","S","N",totals.SN)+
+    resolveAxis("TF","T","F",totals.TF)+
+    resolveAxis("JP","J","P",totals.JP);
+  return {type,scores:scoreObj,totals};
 }
 
 function pctPair(a,b){
@@ -114,11 +270,17 @@ function showPersonal(){
   const r=calcType();
   const box=document.getElementById("personalResult");
   if(!r){
+    const firstMissing=personalAnswers.findIndex(v=>v===null);
+    if(firstMissing>=0){
+      currentQuestion=firstMissing;
+      renderQuiz();
+    }
     box.classList.remove("hidden");
-    box.innerHTML=`<div class="error">16개 문항에 모두 답해주세요.</div>`;
+    box.innerHTML=`<div class="error">아직 답하지 않은 문항이 있습니다. 모든 문항에 응답해주세요.</div>`;
     return;
   }
   const info=typeInfo[r.type], temp=getTemperament(r.type), tinfo=temperamentInfo[temp];
+  const balanced=Object.values(r.totals).some(v=>v===0);
   box.classList.remove("hidden");
   box.innerHTML=`
     <div class="result-top">
@@ -126,6 +288,7 @@ function showPersonal(){
       <div class="result-title">
         <h3>${info.name}</h3>
         <p>업무 상황에서 나타날 수 있는 경향을 간단히 정리한 결과입니다.</p>
+        ${balanced?`<p class="balance-note">※ 50:50인 지표는 핵심문항 응답을 반영해 대표 유형을 표시했습니다.</p>`:""}
         <div class="copyline"><span class="copybox">${r.type}</span><button class="smallbtn" id="copyPersonal">결과 복사</button></div>
       </div>
     </div>
@@ -138,6 +301,7 @@ function showPersonal(){
   document.getElementById("copyPersonal").onclick=()=>navigator.clipboard?.writeText(r.type);
   box.scrollIntoView({behavior:"smooth",block:"start"});
 }
+
 
 const teamCounts = {};
 
@@ -258,11 +422,32 @@ function go(id){
 window.go=go;
 
 document.querySelectorAll("[data-go]").forEach(btn=>btn.addEventListener("click",()=>go(btn.dataset.go)));
-document.getElementById("calcPersonal").onclick=showPersonal;
-document.getElementById("resetPersonal").onclick=()=>{
-  document.querySelectorAll('#quiz input[type=radio]').forEach(x=>x.checked=false);
+document.getElementById("prevQuestion").onclick=()=>{
+  if(currentQuestion>0){
+    currentQuestion--;
+    renderQuiz();
+  }
+};
+document.getElementById("nextQuestion").onclick=()=>{
+  if(personalAnswers[currentQuestion]===null){
+    const box=document.getElementById("personalResult");
+    box.classList.remove("hidden");
+    box.innerHTML=`<div class="error">현재 문항에 응답한 뒤 다음으로 이동해주세요.</div>`;
+    return;
+  }
   document.getElementById("personalResult").classList.add("hidden");
-  updateProgress();
+  if(currentQuestion<questions.length-1){
+    currentQuestion++;
+    renderQuiz();
+  } else {
+    showPersonal();
+  }
+};
+document.getElementById("resetPersonal").onclick=()=>{
+  personalAnswers.fill(null);
+  currentQuestion=0;
+  document.getElementById("personalResult").classList.add("hidden");
+  renderQuiz();
 };
 document.getElementById("addTeamType").onclick=addSelectedTeamType;
 document.getElementById("teamTypeRows").onclick=(e)=>{
