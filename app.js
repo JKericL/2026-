@@ -75,10 +75,10 @@ const questions = [
     {text:"기본적인 인사와 필요한 설명을 넣어 작성한다.", score:0},
     {text:"핵심 내용과 요청사항이 명확하게 보이도록 간결하게 작성한다.", score:2}
   ]},
-  {axis:"TF", q:"팀원을 평가해야 한다면 상대적으로 더 중요하게 보는 것은?", options:[
+  {axis:"TF", q:"구성원을 평가해야 한다면 상대적으로 더 중요하게 보는 것은?", options:[
     {text:"성과와 객관적인 기준의 충족 여부", score:2},
     {text:"결과와 과정, 협업을 균형 있게 고려", score:0},
-    {text:"팀워크, 노력과 구성원이 처한 상황까지 폭넓게 고려", score:-2}
+    {text:"협업 기여, 노력과 구성원이 처한 상황까지 폭넓게 고려", score:-2}
   ]},
 
   // J / P : 계획·구조·마감관리 vs 유연·탐색·상황대응
@@ -316,7 +316,7 @@ function updateTeamRows(){
 
   const entries=Object.entries(teamCounts).filter(([,n])=>n>0);
   if(entries.length===0){
-    rows.innerHTML=`<div class="team-empty">아직 입력된 팀원이 없습니다.</div>`;
+    rows.innerHTML=`<div class="team-empty">아직 입력된 구성원이 없습니다.</div>`;
     return;
   }
 
@@ -353,7 +353,7 @@ function analyzeTeam(){
   const total=getTeamTotal();
   box.classList.remove("hidden");
   if(total===0){
-    box.innerHTML=`<div class="error">팀원 MBTI를 1명 이상 입력해주세요.</div>`;
+    box.innerHTML=`<div class="error">구성원 MBTI를 1명 이상 입력해주세요.</div>`;
     return;
   }
 
@@ -381,7 +381,7 @@ function analyzeTeam(){
     <div class="result-top">
       <div class="type-badge">${teamType}</div>
       <div class="result-title">
-        <h3>우리 팀 대표 MBTI · ${info.name}</h3>
+        <h3>우리 팀(지부) 대표 MBTI · ${info.name}</h3>
         <p>총 ${total}명의 결과를 지표별로 합산해 계산했습니다.</p>
         <div style="margin-top:8px;font-size:12px;color:var(--muted)">구성 · ${composition}</div>
       </div>
@@ -394,18 +394,18 @@ function analyzeTeam(){
     </div>
     <div class="dual" style="margin-top:14px">
       <div class="mini good">
-        <h4>우리 팀이 살릴 수 있는 강점</h4>
+        <h4>우리 팀(지부)이 살릴 수 있는 강점</h4>
         <ul>${[...new Set([...tinfo.good,...info.good])].slice(0,5).map(x=>`<li>${x}</li>`).join("")}</ul>
       </div>
       <div class="mini watch">
-        <h4>우리 팀이 점검해볼 맹점</h4>
+        <h4>우리 팀(지부)이 점검해볼 맹점</h4>
         <ul>${[...new Set([...tinfo.watch,...info.watch])].slice(0,5).map(x=>`<li>${x}</li>`).join("")}</ul>
       </div>
     </div>
     <div class="example-box" style="margin-top:14px">
       <div class="tag">다음 단계</div>
       <p style="margin-bottom:0;line-height:1.7">
-        위 내용이 실제 우리 팀 업무에서도 나타나는지 확인해보세요.
+        위 내용이 실제 우리 팀(지부) 업무에서도 나타나는지 확인해보세요.
         실제 사례가 있다면 <b>작은 개선과제 1건</b>을 선정해 실행하고,
         Before → Action → After 방식으로 정리하면 됩니다.
       </p>

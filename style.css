@@ -273,9 +273,15 @@ textarea:focus{outline:2px solid var(--blue-40);border-color:transparent}
 
 /* Footer */
 footer{
-  width:min(1180px,calc(100% - 40px));margin:0 auto 32px;padding-top:18px;
-  border-top:1px solid var(--line);display:flex;justify-content:space-between;
-  gap:20px;color:var(--muted);font-size:11px
+  width:min(1180px,calc(100% - 40px));
+  margin:0 auto 32px;
+  padding-top:18px;
+  border-top:1px solid var(--line);
+  display:flex;
+  justify-content:flex-end;
+  gap:20px;
+  color:var(--muted);
+  font-size:11px
 }
 .copyline{display:flex;gap:8px;align-items:center;margin-top:12px}
 .copybox{padding:9px 11px;border:1px solid var(--blue-40);border-radius:8px;background:var(--blue-10);color:var(--blue);font-weight:800}
@@ -335,14 +341,13 @@ footer{
   .beforeafter{grid-template-columns:1fr}
   .beforeafter .arrow{transform:rotate(90deg);text-align:center}
   .result-top{align-items:flex-start;flex-direction:column}
-  footer{flex-direction:column}
+  footer{justify-content:flex-end}
 }
 @media(max-width:620px){
   .team-entry-head{align-items:flex-start}
   .team-picker{grid-template-columns:1fr}
   .team-type-row{grid-template-columns:72px 1fr auto;gap:8px}
   .team-type-meta{display:none}
-<<<<<<< HEAD
 }
 
 
@@ -436,6 +441,4 @@ footer{
   .options-three .option{min-height:70px;padding:14px}
   .quiz-nav{align-items:stretch}
   .quiz-nav-right{margin-left:auto}
-=======
->>>>>>> b031425ee1f860dd64bd18ec49ee8bede6c33b92
 }
