@@ -331,7 +331,7 @@ footer{
   .brand h1{font-size:16px}
   .brand p{display:none}
   .hero{padding:40px 26px;min-height:auto;border-radius:18px}
-  .hero h2{font-size:29px;line-height:1.2}
+  .hero h2{font-size:31px;line-height:1.2}
   .hero p{white-space:normal;max-width:none}
   .steps{grid-template-columns:repeat(2,1fr)}
   .grid.three,.improve-flow,.dual{grid-template-columns:1fr}
@@ -447,5 +447,5 @@ footer{
 .brand-logo-only{gap:0}.brand-logo-only .logo{width:112px;height:48px}.eyebrow-hero{font-size:14px;letter-spacing:.04em}
 
 @media(max-width:480px){
-  .hero h2{font-size:29px;line-height:1.22}
+  .hero h2{font-size:27px;line-height:1.22}
 }
