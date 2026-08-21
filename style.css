@@ -461,6 +461,3 @@ footer{
   .hero h2{font-size:clamp(25px,8vw,29px);line-height:1.28;word-break:keep-all}
 }
 
-@media(max-width:380px){
-  .hero .hero-subtitle{font-size:14px}
-}
