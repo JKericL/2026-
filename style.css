@@ -457,10 +457,10 @@ footer{
   .desktop-subtitle{display:none}
   .mobile-subtitle{display:block}
   .mobile-subtitle .subtitle-line{display:block;white-space:nowrap}
-  .hero .hero-subtitle{font-size:13px;line-height:1.75;letter-spacing:-.025em}
+  .hero .hero-subtitle{font-size:15px;line-height:1.75;letter-spacing:-.025em}
   .hero h2{font-size:clamp(25px,8vw,29px);line-height:1.28;word-break:keep-all}
 }
 
 @media(max-width:380px){
-  .hero .hero-subtitle{font-size:12.5px}
+  .hero .hero-subtitle{font-size:14px}
 }
