@@ -461,3 +461,53 @@ footer{
   .hero h2{font-size:clamp(25px,8vw,29px);line-height:1.28;word-break:keep-all}
 }
 
+
+
+/* v0.6.0 · 기획안 용어 및 수행기준 정합화 */
+.improve-notice{margin-top:18px;align-items:flex-start}
+.improve-notice strong{white-space:nowrap}
+@media(max-width:620px){
+  .improve-notice{display:block}
+  .improve-notice strong{display:block;margin-bottom:5px}
+  .beforeafter b{font-size:12px}
+}
+
+
+/* v0.6.1 · 작성양식과 동일한 개선과제 예시 구조 */
+.form-example{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:10px;
+  margin-top:18px;
+}
+.form-example-row{
+  display:grid;
+  grid-template-columns:120px 1fr;
+  min-height:88px;
+  border:1px solid var(--line);
+  border-radius:10px;
+  overflow:hidden;
+  background:#fff;
+}
+.form-example-row b{
+  display:flex;align-items:center;justify-content:center;
+  padding:15px 12px;background:var(--ivory);color:var(--blue);
+  font-size:13px;text-align:center;
+}
+.form-example-row p{
+  margin:0;padding:15px 16px;display:flex;align-items:center;
+  color:var(--dark);font-size:13px;line-height:1.7;
+}
+.example-evidence-note{
+  margin:14px 0 0 !important;
+  color:var(--muted) !important;
+  font-size:12px;line-height:1.7 !important;white-space:normal !important;
+}
+@media(max-width:820px){
+  .form-example{grid-template-columns:1fr}
+  .form-example-row{grid-template-columns:104px 1fr;min-height:78px}
+}
+@media(max-width:480px){
+  .form-example-row{grid-template-columns:92px 1fr}
+  .form-example-row b,.form-example-row p{font-size:12px;padding:13px 11px}
+}
