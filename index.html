@@ -4,7 +4,15 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>우리 팀(지부) 업무 MBTI</title>
-  <link rel="stylesheet" href="style.css" />
+  <link rel="stylesheet" href="style.css?v=0.5.12" />
+  <style>
+    .mobile-title,.mobile-subtitle{display:none}
+    @media(max-width:620px){
+      .desktop-title,.desktop-subtitle{display:none !important}
+      .mobile-title,.mobile-subtitle{display:block !important}
+      .mobile-title .title-line,.mobile-subtitle .subtitle-line{display:block;white-space:nowrap}
+    }
+  </style>
 </head>
 <body>
   <header class="topbar">
@@ -206,6 +214,6 @@
     <span>개인정보 및 검사결과를 별도로 수집하거나 전송하지 않습니다.</span>
   </footer>
 
-  <script src="app.min.js"></script>
+  <script src="app.min.js?v=0.5.12"></script>
 </body>
 </html>
