@@ -152,7 +152,13 @@ const axisVisualLabels={EI:"소통 · 협업 상황",SN:"기획 · 문서 상황
 const questionVisuals = {
   0:{src:"assets/question-01.png", alt:"1번 문항 상황 이미지"},
   1:{src:"assets/question-02.png", alt:"2번 문항 상황 이미지"},
-  2:{src:"assets/question-03.png", alt:"3번 문항 상황 이미지"}
+  2:{src:"assets/question-03.png", alt:"3번 문항 상황 이미지"},
+  3:{src:"assets/question-04.png", alt:"4번 문항 상황 이미지"},
+  4:{src:"assets/question-05.png", alt:"5번 문항 상황 이미지"},
+  5:{src:"assets/question-06.png", alt:"6번 문항 상황 이미지"},
+  6:{src:"assets/question-07.png", alt:"7번 문항 상황 이미지"},
+  7:{src:"assets/question-08.png", alt:"8번 문항 상황 이미지"},
+  8:{src:"assets/question-09.png", alt:"9번 문항 상황 이미지"}
 };
 
 function renderQuiz(){
