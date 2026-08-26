@@ -380,6 +380,10 @@ footer{
   margin-bottom:24px;
   letter-spacing:-.035em;
 }
+.question-single .qnum{
+  font-size:25px;
+  line-height:1.5;
+}
 
 .question-visual-placeholder{width:100%;max-width:620px;margin:0 auto 26px}
 .question-visual-head{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:10px}
@@ -455,6 +459,7 @@ footer{
 @media(max-width:820px){
   .question-single{min-height:0;padding:22px 18px}
   .question-single .qtitle{font-size:21px;margin-bottom:18px}
+  .question-single .qnum{font-size:21px}
   .question-visual-placeholder{max-width:100%;margin-bottom:18px}
   .question-visual-box{aspect-ratio:4 / 5}
   .visual-box-inner{padding:18px 14px}
