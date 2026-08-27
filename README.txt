@@ -1,3 +1,10 @@
+[v0.6.12.1 변경사항]
+- Tailscale Funnel 외부 포트를 443 → 8443으로 변경한 설정에 맞춰 config.js의 NAS API 주소 수정
+- API_BASE_URL: https://ljknas.tail9251fa.ts.net:8443
+- 브라우저 캐시 갱신을 위해 index.html의 config.js 쿼리 버전을 0.6.12.1로 변경
+- app.min.js, style.css, assets 및 NAS 백엔드는 수정하지 않음
+- Docker 컨테이너 재시작 불필요
+
 [v0.6.12 변경사항]
 - 개인 MBTI 검사 진입 시 1번 문항보다 먼저 '소속 팀(지부) 선택' 단계를 별도 화면으로 표시
 - 소속 팀(지부)을 선택해야 '검사 시작하기' 버튼이 활성화되도록 변경
