@@ -1,3 +1,25 @@
+[v0.7 변경사항]
+- 최신 실제 실행 코드를 사람이 읽을 수 있는 `app.source.js`로 분리
+- 실제 배포 파일 `app.min.js`는 `app.source.js`에서 생성하도록 구조 정리
+- `build-app.ps1` 추가: PowerShell 한 번으로 `app.min.js` 재생성 및 `index.html`의 캐시 버전 갱신
+- 사용 예: `.\build-app.ps1 0.7.1`
+- 앞으로 자잘한 문구/로직 수정은 `app.source.js`에서 진행하고, 수정 후 빌드 스크립트를 실행
+- 기존 `app.js`, `app_decoded.js`는 과거 버전 소스이므로 v0.7부터 편집 기준으로 사용하지 않음
+- 업무기질 설명 문구의 `팀` 표현을 `팀(지부)`로 수정한 v0.6.14.1 변경사항 포함
+- assets 및 NAS 백엔드 변경 없음 / Docker 재시작 불필요
+
+[편집 방법]
+1. VS Code에서 `app.source.js`를 수정합니다.
+2. PowerShell에서 프로젝트 폴더로 이동합니다.
+3. 예: `.\build-app.ps1 0.7.1` 실행
+4. `app.min.js`가 새로 생성되고 `index.html`의 `app.min.js?v=` 값도 입력한 버전으로 변경됩니다.
+5. README.txt에 해당 버전 변경사항을 추가한 뒤 Commit → Push 합니다.
+
+[v0.6.14.1 변경사항]
+- 업무기질 안내 문구의 "팀의 전반적인 업무성향"을 "팀(지부)의 전반적인 업무성향"으로 변경
+- app.min.js 캐시 버전을 v0.6.14.1로 갱신
+- assets / style.css / NAS 백엔드 수정 없음, Docker 재시작 불필요
+
 [v0.6.14 변경사항]
 - 팀 결과 상단 표기를 "대표 MBTI : INTJ(전략형 설계자)" 형식으로 변경
 - 기존 "총 n명의 결과를 지표별로 합산해 계산했습니다." 문구 삭제

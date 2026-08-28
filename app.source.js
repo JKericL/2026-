@@ -171,11 +171,6 @@ function renderQuiz(){
 
   quiz.innerHTML = `
     <div class="question question-single">
-      <div class="question-meta">
-        <span class="qnum">${String(currentQuestion+1).padStart(2,"0")}</span>
-        <span class="question-count">${currentQuestion+1} / ${questions.length}</span>
-      </div>
-      <div class="qtitle">${x.q}</div>
       <div class="question-visual-placeholder" ${visualHidden}>
         <div class="question-visual-box ${visual ? "has-image" : ""}">
           ${visual ? `
@@ -190,6 +185,11 @@ function renderQuiz(){
           `}
         </div>
       </div>
+      <div class="question-meta">
+        <span class="qnum">${String(currentQuestion+1).padStart(2,"0")}</span>
+        <span class="question-count">${currentQuestion+1} / ${questions.length}</span>
+      </div>
+      <div class="qtitle">${x.q}</div>
       <div class="options options-three">
         ${x.options.map((opt,idx)=>`
           <label class="option ${selected===idx ? "selected" : ""}">
@@ -297,6 +297,194 @@ function axisHtml(scores){
   }</div>`;
 }
 
+
+let personalQuizStarted = false;
+
+function selectedPersonalTeamName(){
+  const select=document.getElementById("personalTeamSelect");
+  if(!select || !select.value) return "";
+  return select.options[select.selectedIndex]?.textContent || "";
+}
+
+function syncPersonalStartButton(){
+  const select=document.getElementById("personalTeamSelect");
+  const btn=document.getElementById("startPersonalQuiz");
+  if(!btn) return;
+  btn.disabled=!select?.value;
+  const answered=personalAnswers.filter(v=>v!==null).length;
+  btn.textContent=answered>0 ? `검사 계속하기 (${answered}/${questions.length})` : "검사 시작하기";
+}
+
+function updatePersonalFlowUI(){
+  const start=document.getElementById("personalStart");
+  const area=document.getElementById("personalQuizArea");
+  const progress=document.getElementById("personalProgressWrap");
+  if(start) start.classList.toggle("hidden",personalQuizStarted);
+  if(area) area.classList.toggle("hidden",!personalQuizStarted);
+  if(progress) progress.classList.toggle("hidden",!personalQuizStarted);
+  const teamName=document.getElementById("selectedTeamName");
+  if(teamName) teamName.textContent=selectedPersonalTeamName() || "-";
+  syncPersonalStartButton();
+}
+
+function openPersonalTeamSelection(){
+  personalQuizStarted=false;
+  updatePersonalFlowUI();
+  document.getElementById("personalStart")?.scrollIntoView({behavior:"smooth",block:"start"});
+}
+
+function startPersonalQuiz(){
+  const select=document.getElementById("personalTeamSelect");
+  if(!select?.value){
+    setNasStatus("nasApiStatus","소속 팀(지부)을 선택한 뒤 검사를 시작해 주세요.","warn");
+    syncPersonalStartButton();
+    return;
+  }
+  localStorage.setItem("teamMbtiTeamCode",select.value);
+  const resultSelect=document.getElementById("teamResultSelect");
+  if(resultSelect) resultSelect.value=select.value;
+  personalQuizStarted=true;
+  updatePersonalFlowUI();
+  renderQuiz();
+  document.getElementById("personalQuizArea")?.scrollIntoView({behavior:"smooth",block:"start"});
+}
+
+const NAS_CFG = window.MBTI_CONFIG || {};
+const NAS_API_BASE = String(NAS_CFG.API_BASE_URL || "").replace(/\/$/, "");
+const NAS_MIN_TEAM_RESULT_COUNT = Number(NAS_CFG.MIN_TEAM_RESULT_COUNT || 3);
+
+function nasConfigured(){
+  return Boolean(NAS_API_BASE && !NAS_API_BASE.includes("YOUR-") && !NAS_API_BASE.includes("example"));
+}
+
+function getNasDeviceId(){
+  const key="teamMbtiDeviceId";
+  let id=localStorage.getItem(key);
+  if(!id){
+    id=(crypto.randomUUID ? crypto.randomUUID() : `mbti-${Date.now()}-${Math.random().toString(36).slice(2)}`);
+    localStorage.setItem(key,id);
+  }
+  return id;
+}
+
+async function nasFetch(path, options={}){
+  if(!nasConfigured()) throw new Error("NAS_API_NOT_CONFIGURED");
+  const controller=new AbortController();
+  const timer=setTimeout(()=>controller.abort(),7000);
+  try{
+    const res=await fetch(`${NAS_API_BASE}${path}`,{
+      ...options,
+      signal:controller.signal,
+      headers:{"Content-Type":"application/json",...(options.headers||{})}
+    });
+    const data=await res.json().catch(()=>({}));
+    if(!res.ok) throw new Error(data.error || `HTTP_${res.status}`);
+    return data;
+  } finally {
+    clearTimeout(timer);
+  }
+}
+
+function setNasStatus(id,text,kind=""){
+  const el=document.getElementById(id);
+  if(!el) return;
+  el.textContent=text;
+  el.className=`nas-api-status ${kind}`.trim();
+}
+
+function fillTeamSelect(select, teams, selected=""){
+  if(!select) return;
+  select.innerHTML='<option value="">소속 팀(지부)을 선택하세요</option>'+teams.map(t=>`<option value="${t.code}">${t.name}</option>`).join("");
+  if(selected && teams.some(t=>t.code===selected)) select.value=selected;
+}
+
+async function initNasIntegration(){
+  const personalSelect=document.getElementById("personalTeamSelect");
+  const resultSelect=document.getElementById("teamResultSelect");
+  const saved=localStorage.getItem("teamMbtiTeamCode") || "";
+  if(!nasConfigured()){
+    fillTeamSelect(personalSelect,[],"");
+    fillTeamSelect(resultSelect,[],"");
+    if(personalSelect) personalSelect.innerHTML='<option value="">NAS 주소 설정 후 팀 목록을 불러옵니다</option>';
+    if(resultSelect) resultSelect.innerHTML='<option value="">NAS 주소 설정 후 팀 목록을 불러옵니다</option>';
+    setNasStatus("nasApiStatus","현재 NAS API 주소가 설정되지 않아 개인검사만 사용할 수 있습니다.","warn");
+    syncPersonalStartButton();
+    return;
+  }
+  try{
+    const health=await nasFetch("/api/health");
+    const data=await nasFetch("/api/teams");
+    const teams=data.teams||[];
+    fillTeamSelect(personalSelect,teams,saved);
+    fillTeamSelect(resultSelect,teams,saved);
+    setNasStatus("nasApiStatus",`NAS 집계 서버 연결됨 · 팀 ${teams.length}개`,"ok");
+    syncPersonalStartButton();
+    if(health.status!=="ok") setNasStatus("nasApiStatus","NAS 서버 응답은 있으나 상태 확인이 필요합니다.","warn");
+  }catch(err){
+    if(personalSelect) personalSelect.innerHTML='<option value="">팀 목록을 불러오지 못했습니다</option>';
+    if(resultSelect) resultSelect.innerHTML='<option value="">팀 목록을 불러오지 못했습니다</option>';
+    setNasStatus("nasApiStatus","NAS 집계 서버에 연결할 수 없습니다. 네트워크/HTTPS 주소를 확인해 주세요.","error");
+    syncPersonalStartButton();
+  }
+}
+
+async function submitPersonalResult(type){
+  const status=document.getElementById("remoteSubmitStatus");
+  const select=document.getElementById("personalTeamSelect");
+  const teamCode=select?.value || "";
+  if(!teamCode){
+    if(status){status.textContent="소속 팀(지부)을 선택하면 결과를 팀 집계에 반영할 수 있습니다.";status.className="remote-submit-status error";}
+    return;
+  }
+  localStorage.setItem("teamMbtiTeamCode",teamCode);
+  const teamResultSelect=document.getElementById("teamResultSelect");
+  if(teamResultSelect) teamResultSelect.value=teamCode;
+  if(!nasConfigured()){
+    if(status){status.textContent="NAS API 주소가 아직 설정되지 않아 팀 자동 집계에는 반영되지 않았습니다.";status.className="remote-submit-status error";}
+    return;
+  }
+  try{
+    if(status){status.textContent="팀 결과에 익명으로 반영 중...";status.className="remote-submit-status";}
+    const data=await nasFetch("/api/results",{
+      method:"POST",
+      body:JSON.stringify({team_code:teamCode,mbti:type,device_id:getNasDeviceId()})
+    });
+    if(status){status.textContent=`팀 집계 반영 완료 · 현재 ${data.team_total}명 참여`;status.className="remote-submit-status";}
+  }catch(err){
+    if(status){status.textContent="개인 결과는 정상 산출되었지만 NAS 팀 집계 전송에는 실패했습니다.";status.className="remote-submit-status error";}
+  }
+}
+
+async function loadRemoteTeamResult(){
+  const select=document.getElementById("teamResultSelect");
+  const code=select?.value || "";
+  const box=document.getElementById("teamResult");
+  if(!code){
+    setNasStatus("teamRemoteStatus","조회할 팀(지부)을 선택해 주세요.","warn");
+    return;
+  }
+  localStorage.setItem("teamMbtiTeamCode",code);
+  const personalSelect=document.getElementById("personalTeamSelect");
+  if(personalSelect) personalSelect.value=code;
+  try{
+    setNasStatus("teamRemoteStatus","팀 결과 불러오는 중...","");
+    const data=await nasFetch(`/api/team-results?team_code=${encodeURIComponent(code)}`);
+    if(!data.available){
+      box.classList.remove("hidden");
+      box.innerHTML=`<div class="error">현재 ${data.total}명 참여 · 팀 결과는 ${data.min_required}명 이상 참여 후 공개됩니다.</div>`;
+      setNasStatus("teamRemoteStatus",`${data.team_name} · ${data.total}명 참여`,"warn");
+      return;
+    }
+    Object.keys(teamCounts).forEach(k=>delete teamCounts[k]);
+    Object.entries(data.counts||{}).forEach(([type,n])=>{if(n>0) teamCounts[type]=Number(n);});
+    updateTeamRows();
+    analyzeTeam();
+    setNasStatus("teamRemoteStatus",`${data.team_name} · 총 ${data.total}명 참여 · 자동 집계 결과`,"ok");
+  }catch(err){
+    setNasStatus("teamRemoteStatus","NAS에서 팀 결과를 불러오지 못했습니다.","error");
+  }
+}
+
 function showPersonal(){
   const r=calcType();
   const box=document.getElementById("personalResult");
@@ -328,8 +516,12 @@ function showPersonal(){
     <div class="dual" style="margin-top:14px">
       <div class="mini good"><h4>업무에서 살릴 수 있는 강점</h4><ul>${info.good.map(x=>`<li>${x}</li>`).join("")}</ul></div>
       <div class="mini watch"><h4>한 번 점검해볼 부분</h4><ul>${info.watch.map(x=>`<li>${x}</li>`).join("")}</ul></div>
-    </div>`;
+    </div>
+    <div id="remoteSubmitStatus" class="remote-submit-status">팀 집계 반영 준비 중...</div>
+    <button id="viewMyTeamResult" class="btn secondary remote-team-button" type="button">우리 팀(지부) 결과 보기</button>`;
   document.getElementById("copyPersonal").onclick=()=>navigator.clipboard?.writeText(r.type);
+  document.getElementById("viewMyTeamResult").onclick=()=>{go("team");loadRemoteTeamResult();};
+  submitPersonalResult(r.type);
   box.scrollIntoView({behavior:"smooth",block:"start"});
 }
 
@@ -409,17 +601,17 @@ function analyzeTeam(){
     .map(([t,n])=>`${t} ${n}명`).join(" · ");
 
   box.innerHTML=`
-    <div class="result-top">
+    <div class="result-top team-result-top">
       <div class="type-badge">${teamType}</div>
-      <div class="result-title">
-        <h3>우리 팀(지부) 대표 MBTI · ${info.name}</h3>
-        <p>총 ${total}명의 결과를 지표별로 합산해 계산했습니다.</p>
-        <div style="margin-top:8px;font-size:12px;color:var(--muted)">구성 · ${composition}</div>
+      <div class="result-title team-result-title">
+        <h3>대표 MBTI : ${teamType}<span class="team-result-name">(${info.name})</span></h3>
+        <p class="team-composition">구성 : ${composition}</p>
       </div>
     </div>
     ${axisHtml(counts)}
     <div class="kiersey">
-      <b>주요 기질 ${topTemp} · ${tinfo.name}</b><br>
+      <b>주요 기질 ${topTemp} · ${tinfo.name}</b>
+      <p class="temperament-note">업무기질은 구성원의 MBTI를 4개 유형(SJ·SP·NT·NF)으로 묶어 팀(지부)의 전반적인 업무성향을 살펴보는 참고 지표입니다. 대표 MBTI와는 별도의 보조 분석 결과입니다.</p>
       <span>${tinfo.desc}</span>
       <div style="margin-top:8px;font-size:12px;color:#5b6c64">기질 분포 · ${dist}</div>
     </div>
@@ -479,6 +671,7 @@ document.getElementById("resetPersonal").onclick=()=>{
   currentQuestion=0;
   document.getElementById("personalResult").classList.add("hidden");
   renderQuiz();
+  openPersonalTeamSelection();
 };
 document.getElementById("addTeamType").onclick=addSelectedTeamType;
 document.getElementById("teamTypeRows").onclick=(e)=>{
@@ -498,5 +691,22 @@ document.getElementById("clearTeam").onclick=()=>{
   document.getElementById("teamResult").classList.add("hidden");
 };
 
+document.getElementById("personalTeamSelect")?.addEventListener("change",(e)=>{
+  if(e.target.value){
+    localStorage.setItem("teamMbtiTeamCode",e.target.value);
+    const t=document.getElementById("teamResultSelect");
+    if(t) t.value=e.target.value;
+  }
+  syncPersonalStartButton();
+});
+document.getElementById("startPersonalQuiz")?.addEventListener("click",startPersonalQuiz);
+document.getElementById("changePersonalTeam")?.addEventListener("click",openPersonalTeamSelection);
+document.getElementById("teamResultSelect")?.addEventListener("change",(e)=>{
+  if(e.target.value) localStorage.setItem("teamMbtiTeamCode",e.target.value);
+});
+document.getElementById("loadTeamResult")?.addEventListener("click",loadRemoteTeamResult);
+
 renderQuiz();
 updateTeamRows();
+updatePersonalFlowUI();
+initNasIntegration();
