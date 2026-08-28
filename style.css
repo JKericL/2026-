@@ -633,3 +633,12 @@ footer{
   .selected-team-banner{max-width:100%;margin-bottom:14px;padding:10px 12px;gap:8px}
 }
 
+
+/* v0.6.13: team work-temperament helper text */
+.temperament-note{
+  margin:9px 0 8px;
+  font-size:14px;
+  line-height:1.65;
+  font-weight:500;
+  color:var(--text);
+}

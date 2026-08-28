@@ -1,17 +1,8 @@
-[v0.6.12.2 변경사항]
-- 테스트 종료 후 실제 캠페인 시작 전에 NAS 집계 결과를 전체 초기화할 수 있는 reset_test_data.sh 추가
-- 초기화 스크립트는 실행 전 RESET 문구를 직접 입력해야 동작하도록 안전 확인 절차 적용
-- 초기화 시 team-mbti-api 컨테이너를 잠시 중지한 뒤 SQLite DB(team_mbti.db 및 WAL/SHM 파일)를 삭제하고 다시 시작
-- README에 운영 시작 전 테스트 결과 초기화 절차 추가
-- 프론트엔드(index.html, config.js, app.min.js, style.css) 및 assets는 수정하지 않음
-- 스크립트 파일을 NAS에 복사하는 것만으로는 Docker 재시작 불필요
-
-[v0.6.12.1 변경사항]
-- Tailscale Funnel 외부 포트를 443 → 8443으로 변경한 설정에 맞춰 config.js의 NAS API 주소 수정
-- API_BASE_URL: https://ljknas.tail9251fa.ts.net:8443
-- 브라우저 캐시 갱신을 위해 index.html의 config.js 쿼리 버전을 0.6.12.1로 변경
-- app.min.js, style.css, assets 및 NAS 백엔드는 수정하지 않음
-- Docker 컨테이너 재시작 불필요
+[v0.6.13 변경사항]
+- 팀(지부) 결과의 '주요 기질' 영역에 업무기질 설명 문구를 추가했습니다.
+- 추가 문구: "업무기질은 구성원의 MBTI를 4개 유형(SJ·SP·NT·NF)으로 묶어 팀의 전반적인 업무성향을 살펴보는 참고 지표입니다. 대표 MBTI와는 별도의 보조 분석 결과입니다."
+- 안내문은 연한 보조문구가 아니라 본문과 동일한 진한 계열 색상과 읽기 쉬운 크기/굵기로 표시합니다.
+- assets 및 NAS 백엔드는 수정하지 않았으며 Docker 재시작은 필요하지 않습니다.
 
 [v0.6.12 변경사항]
 - 개인 MBTI 검사 진입 시 1번 문항보다 먼저 '소속 팀(지부) 선택' 단계를 별도 화면으로 표시
@@ -34,27 +25,6 @@
 - assets 폴더 및 이미지 파일은 수정하지 않음
 
 # 우리 팀(지부) 업무 MBTI
-
-## 운영 시작 전 테스트 결과 전체 초기화
-테스트 기간에 누적된 결과를 삭제하고 실제 캠페인을 0명부터 시작할 때 사용합니다.
-
-### 권장 방법: 초기화 스크립트 사용
-1. 이 패치의 `nas_backend/reset_test_data.sh` 파일을 NAS의 `/docker/team-mbti-api/` 폴더에 복사합니다.
-2. SSH로 NAS에 접속합니다.
-3. 아래 명령을 실행합니다.
-
-```bash
-cd /volume1/docker/team-mbti-api
-sudo sh reset_test_data.sh
-```
-
-4. 화면에 확인 문구가 나오면 `RESET`을 정확히 입력합니다.
-5. 스크립트가 `team-mbti-api` 컨테이너를 중지하고 `data/team_mbti.db`, `team_mbti.db-wal`, `team_mbti.db-shm` 등을 삭제한 뒤 컨테이너를 다시 시작합니다.
-6. 초기화 후 `/api/team-results?team_code=...`에서 참여인원이 0명으로 표시되는지 확인합니다.
-
-※ 이 작업은 MBTI 전용 DB만 삭제합니다. NAS의 다른 공유폴더, 사진, 문서, 백업 데이터에는 접근하거나 변경하지 않습니다.
-※ 실제 운영 데이터가 누적된 이후 실행하면 그 결과도 모두 삭제되므로 캠페인 시작 전 테스트 데이터 정리에만 사용하세요.
-
 
 ## 적용 방법
 1. 이 패치 ZIP의 파일을 기존 GitHub 저장소 최상위 폴더에 덮어씁니다.
