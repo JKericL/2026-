@@ -1,40 +1,68 @@
 param(
-    [Parameter(Position = 0)]
-    [string]$Version = "0.7"
+  [Parameter(Position = 0)]
+  [string]$Version = ""
 )
 
 $ErrorActionPreference = "Stop"
+[Console]::OutputEncoding = [System.Text.UTF8Encoding]::new($false)
+$OutputEncoding = [Console]::OutputEncoding
+
 $root = $PSScriptRoot
 $sourcePath = Join-Path $root "app.source.js"
 $outputPath = Join-Path $root "app.min.js"
-$indexPath = Join-Path $root "index.html"
+$indexPath  = Join-Path $root "index.html"
+
+if ([string]::IsNullOrWhiteSpace($Version)) {
+  $Version = Read-Host "Version (example: 0.7.3)"
+}
+
+if ([string]::IsNullOrWhiteSpace($Version)) {
+  throw "Version is required."
+}
 
 if (-not (Test-Path $sourcePath)) {
-    throw "app.source.js 파일을 찾을 수 없습니다: $sourcePath"
+  throw "app.source.js not found: $sourcePath"
 }
+
 if (-not (Test-Path $indexPath)) {
-    throw "index.html 파일을 찾을 수 없습니다: $indexPath"
+  throw "index.html not found: $indexPath"
 }
 
 $utf8 = New-Object System.Text.UTF8Encoding($false)
+
+# 1) app.source.js -> app.min.js
 $source = [System.IO.File]::ReadAllText($sourcePath, [System.Text.Encoding]::UTF8)
-$bytes = [System.Text.Encoding]::UTF8.GetBytes($source)
+$bytes  = [System.Text.Encoding]::UTF8.GetBytes($source)
 $base64 = [System.Convert]::ToBase64String($bytes)
-$wrapper = '(()=>{const b="' + $base64 + '";const s=decodeURIComponent(escape(atob(b)));Function(s)();})();' + [Environment]::NewLine
+
+# UTF-8 safe browser decoder. This is only light obfuscation, not security.
+$wrapper = '(()=>{const b="' + $base64 + '";const x=atob(b);const a=Uint8Array.from(x,c=>c.charCodeAt(0));const s=new TextDecoder("utf-8").decode(a);Function(s)();})();'
 [System.IO.File]::WriteAllText($outputPath, $wrapper, $utf8)
 
+# 2) Cache-busting version in index.html
 $index = [System.IO.File]::ReadAllText($indexPath, [System.Text.Encoding]::UTF8)
-$replacement = 'app.min.js?v=' + $Version
+
 $updated = [System.Text.RegularExpressions.Regex]::Replace(
-    $index,
-    'app\.min\.js\?v=[^"'']+',
-    $replacement
+  $index,
+  'app\.min\.js\?v=[^"''\s>]+',
+  "app.min.js?v=$Version"
 )
+
+$updated = [System.Text.RegularExpressions.Regex]::Replace(
+  $updated,
+  'style\.css\?v=[^"''\s>]+',
+  "style.css?v=$Version"
+)
+
 if ($updated -eq $index -and $index -notmatch 'app\.min\.js\?v=') {
-    throw "index.html에서 app.min.js?v= 항목을 찾지 못했습니다."
+  throw "Could not find app.min.js?v=... in index.html"
 }
+
 [System.IO.File]::WriteAllText($indexPath, $updated, $utf8)
 
-Write-Host "완료: app.source.js -> app.min.js"
-Write-Host "완료: index.html 캐시 버전 -> $Version"
-Write-Host "이제 README.txt에 변경사항을 기록한 뒤 Commit -> Push 하세요."
+Write-Host ""
+Write-Host "Build complete."
+Write-Host "  app.source.js -> app.min.js"
+Write-Host "  index.html cache version -> $Version"
+Write-Host ""
+Write-Host "Next: open GitHub Desktop, Commit, then Push origin."
