@@ -428,7 +428,6 @@ async function initNasIntegration(){
     const teams=data.teams||[];
     fillTeamSelect(personalSelect,teams,saved);
     fillTeamSelect(resultSelect,teams,saved);
-    setNasStatus("nasApiStatus",`NAS 집계 서버 연결됨 · 팀 ${teams.length}개`,"ok");
     syncPersonalStartButton();
     if(health.status!=="ok") setNasStatus("nasApiStatus","NAS 서버 응답은 있으나 상태 확인이 필요합니다.","warn");
   }catch(err){
