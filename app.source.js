@@ -159,17 +159,17 @@ const questionVisuals = {
   6:{src:"assets/question-07.png", alt:"7번 문항 상황 이미지"},
   7:{src:"assets/question-08.png", alt:"8번 문항 상황 이미지"},
   8:{src:"assets/question-09.png", alt:"9번 문항 상황 이미지"},
-  9:{src:"assets/question-09.png", alt:"10번 문항 상황 이미지"},
-  10:{src:"assets/question-10.png", alt:"11번 문항 상황 이미지"},
-  11:{src:"assets/question-11.png", alt:"12번 문항 상황 이미지"},
-  12:{src:"assets/question-12.png", alt:"13번 문항 상황 이미지"},
-  13:{src:"assets/question-13.png", alt:"14번 문항 상황 이미지"},
-  14:{src:"assets/question-14.png", alt:"15번 문항 상황 이미지"},
-  15:{src:"assets/question-15.png", alt:"16번 문항 상황 이미지"},
-  16:{src:"assets/question-16.png", alt:"17번 문항 상황 이미지"},
-  17:{src:"assets/question-17.png", alt:"18번 문항 상황 이미지"},
-  18:{src:"assets/question-18.png", alt:"19번 문항 상황 이미지"},
-  19:{src:"assets/question-19.png", alt:"20번 문항 상황 이미지"}
+  9:{src:"assets/question-10.png", alt:"10번 문항 상황 이미지"},
+  10:{src:"assets/question-11.png", alt:"11번 문항 상황 이미지"},
+  11:{src:"assets/question-12.png", alt:"12번 문항 상황 이미지"},
+  12:{src:"assets/question-13.png", alt:"13번 문항 상황 이미지"},
+  13:{src:"assets/question-14.png", alt:"14번 문항 상황 이미지"},
+  14:{src:"assets/question-15.png", alt:"15번 문항 상황 이미지"},
+  15:{src:"assets/question-16.png", alt:"16번 문항 상황 이미지"},
+  16:{src:"assets/question-17.png", alt:"17번 문항 상황 이미지"},
+  17:{src:"assets/question-18.png", alt:"18번 문항 상황 이미지"},
+  18:{src:"assets/question-19.png", alt:"19번 문항 상황 이미지"},
+  19:{src:"assets/question-20.png", alt:"20번 문항 상황 이미지"}
 };
 
 function renderQuiz(){
