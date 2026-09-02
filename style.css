@@ -483,6 +483,19 @@ footer{
   .mobile-subtitle .subtitle-line{display:block;white-space:nowrap}
   .hero .hero-subtitle{font-size:15px;line-height:1.75;letter-spacing:-.025em}
   .hero h2{font-size:clamp(25px,8vw,29px);line-height:1.28;word-break:keep-all}
+    .notice{
+    padding:13px 14px;
+    gap:8px;
+    font-size:12px;
+    line-height:1.65;
+    align-items:flex-start;
+  }
+
+  .notice strong{
+    flex:0 0 auto;
+    white-space:nowrap;
+    font-size:12px;
+  }
 }
 
 
