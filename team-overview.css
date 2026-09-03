@@ -1,66 +1,117 @@
-/* v0.8.0.2 · 공개용 팀(지부) 전체 대표 MBTI/주요기질 현황
-   카드 내부 요소가 좁은 화면/브라우저 확대에서도 박스 밖으로 튀어나오지 않도록
-   2행 레이아웃으로 재구성 */
+/* v0.8.0.3 · 팀(지부) 전체 보기 카드 정렬 고정
+   모든 카드에서 팀명 / MBTI(또는 집계 중) / 주요 기질 / 상세보기 위치를 동일하게 유지 */
+
 .sr-only{
-  position:absolute!important;width:1px!important;height:1px!important;padding:0!important;margin:-1px!important;
-  overflow:hidden!important;clip:rect(0,0,0,0)!important;white-space:nowrap!important;border:0!important
-}
-.all-team-overview{
-  margin:22px 0 0;padding:24px;
-  border:1px solid var(--line);border-radius:18px;background:#fff;
-  box-shadow:0 8px 24px rgba(33,64,154,.04)
-}
-.all-team-overview-head{
-  display:flex;justify-content:space-between;align-items:flex-end;gap:22px;margin-bottom:14px
-}
-.all-team-overview-head .eyebrow{margin-bottom:7px}
-.all-team-overview-head h3{
-  margin:0 0 8px;font-size:22px;line-height:1.4;color:var(--blue);letter-spacing:-.035em
-}
-.all-team-overview-head p{margin:0;color:var(--muted);font-size:13px;line-height:1.7}
-.all-team-overview-tools{flex:0 0 min(280px,34%);min-width:0}
-.all-team-overview-tools input{
-  width:100%;min-height:44px;padding:0 13px;border:1px solid var(--line);border-radius:11px;
-  background:#FAFAFA;color:var(--text);font:inherit
-}
-.all-team-overview-tools input:focus{outline:2px solid var(--blue-40);border-color:transparent}
-.team-overview-meta{margin:2px 0 12px;font-size:12px;color:var(--muted)}
-.team-overview-list{
-  display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px
+  position:absolute!important;
+  width:1px!important;height:1px!important;
+  padding:0!important;margin:-1px!important;
+  overflow:hidden!important;
+  clip:rect(0,0,0,0)!important;
+  white-space:nowrap!important;
+  border:0!important;
 }
 
-/* 핵심 수정: 한 카드 안을 4열로 억지로 끼우지 않고 2행으로 배치 */
-.team-overview-card{
+.all-team-overview{
+  margin:22px 0 0;
+  padding:24px;
+  border:1px solid var(--line);
+  border-radius:18px;
+  background:#fff;
+  box-shadow:0 8px 24px rgba(33,64,154,.04);
+}
+
+.all-team-overview-head{
+  display:flex;
+  justify-content:space-between;
+  align-items:flex-end;
+  gap:22px;
+  margin-bottom:14px;
+}
+
+.all-team-overview-head .eyebrow{margin-bottom:7px}
+
+.all-team-overview-head h3{
+  margin:0 0 8px;
+  font-size:22px;
+  line-height:1.4;
+  color:var(--blue);
+  letter-spacing:-.035em;
+}
+
+.all-team-overview-head p{
+  margin:0;
+  color:var(--muted);
+  font-size:13px;
+  line-height:1.7;
+}
+
+.all-team-overview-tools{
+  flex:0 0 min(280px,34%);
   min-width:0;
-  min-height:92px;
-  padding:13px 14px;
+}
+
+.all-team-overview-tools input{
+  width:100%;
+  min-height:44px;
+  padding:0 13px;
+  border:1px solid var(--line);
+  border-radius:11px;
+  background:#FAFAFA;
+  color:var(--text);
+  font:inherit;
+}
+
+.all-team-overview-tools input:focus{
+  outline:2px solid var(--blue-40);
+  border-color:transparent;
+}
+
+.team-overview-meta{
+  margin:2px 0 12px;
+  font-size:12px;
+  color:var(--muted);
+}
+
+.team-overview-list{
+  display:grid;
+  grid-template-columns:repeat(2,minmax(0,1fr));
+  gap:10px;
+}
+
+/* 핵심:
+   available / pending 모두 같은 4열을 사용한다.
+   1열 팀명 | 2열 MBTI/집계중 | 3열 주요기질 | 4열 상세보기 */
+.team-overview-card{
+  display:grid !important;
+  grid-template-columns:minmax(130px,1fr) 72px 112px 76px !important;
+  align-items:center !important;
+  column-gap:12px !important;
+  min-width:0;
+  min-height:72px;
+  padding:12px 14px;
   border:1px solid var(--line);
   border-radius:13px;
   background:#fff;
 }
+
 .team-overview-card.available{
-  display:grid;
-  grid-template-columns:minmax(0,1fr) auto;
-  grid-template-areas:
-    "name detail"
-    "result result";
-  align-items:center;
-  gap:10px 12px;
   border-color:#D6DCEC;
   background:#FCFDFF;
 }
+
 .team-overview-card.pending{
-  display:grid;
-  grid-template-columns:minmax(0,1fr) auto;
-  align-items:center;
-  gap:10px;
-  min-height:72px;
   background:#FAFAFA;
   color:var(--muted);
 }
+
+/* DOM 순서와 관계없이 위치를 강제로 고정 */
 .team-overview-name{
-  grid-area:name;
+  grid-column:1 !important;
+  grid-row:1 !important;
+  justify-self:start !important;
+  align-self:center !important;
   min-width:0;
+  margin:0 !important;
   font-size:14px;
   font-weight:700;
   line-height:1.45;
@@ -68,67 +119,90 @@
   word-break:keep-all;
   overflow-wrap:anywhere;
 }
-.team-overview-card.available .team-overview-name{color:var(--text)}
 
-.team-overview-card.available::after{
-  content:"";
-  grid-area:result;
-  display:none;
+.team-overview-card.available .team-overview-name{
+  color:var(--text);
 }
+
 .team-overview-mbti{
-  grid-area:result;
-  justify-self:start;
+  grid-column:2 !important;
+  grid-row:1 !important;
+  justify-self:start !important;
+  align-self:center !important;
   display:inline-flex;
   align-items:center;
   justify-content:center;
+  width:64px;
   min-width:64px;
   height:38px;
-  padding:0 10px;
+  padding:0;
+  margin:0 !important;
   border-radius:9px;
   background:var(--blue);
   color:#fff;
   font-weight:800;
   letter-spacing:.04em;
 }
+
 .team-overview-temp{
-  grid-area:result;
-  justify-self:start;
-  margin-left:78px;
+  grid-column:3 !important;
+  grid-row:1 !important;
+  justify-self:start !important;
+  align-self:center !important;
   min-width:0;
+  margin:0 !important;
   font-size:13px;
   line-height:1.25;
   color:var(--dark);
   font-weight:700;
   white-space:nowrap;
 }
+
 .team-overview-temp small{
-  display:inline;
-  margin-left:6px;
+  display:block;
+  margin:3px 0 0;
   color:var(--muted);
   font-size:11px;
   font-weight:500;
+  white-space:nowrap;
 }
+
 .team-overview-detail{
-  grid-area:detail;
-  justify-self:end;
-  flex:0 0 auto;
+  grid-column:4 !important;
+  grid-row:1 !important;
+  justify-self:end !important;
+  align-self:center !important;
+  min-width:68px;
+  min-height:36px;
+  padding:0 9px;
+  margin:0 !important;
   border:1px solid var(--blue-40);
+  border-radius:9px;
   background:var(--blue-10);
   color:var(--blue);
-  min-height:36px;
-  padding:0 11px;
-  border-radius:9px;
   font-size:12px;
   font-weight:700;
   white-space:nowrap;
 }
-.team-overview-detail:hover{background:#E5EAF5}
+
+.team-overview-detail:hover{
+  background:#E5EAF5;
+}
+
+/* 집계 중 카드도 MBTI가 표시될 2열 자리에 고정 */
 .team-overview-pending-badge{
+  grid-column:2 !important;
+  grid-row:1 !important;
+  justify-self:start !important;
+  align-self:center !important;
   display:inline-flex;
   align-items:center;
   justify-content:center;
-  min-height:34px;
-  padding:0 10px;
+  width:72px;
+  min-width:72px;
+  min-height:36px;
+  padding:0 6px;
+  margin:0 !important;
   border-radius:9px;
   background:var(--ivory);
   border:1px solid var(--line);
@@ -137,49 +211,122 @@
   font-weight:700;
   white-space:nowrap;
 }
+
+/* pending 카드에 남는 3·4열은 그냥 빈 공간으로 유지 → 모든 카드 위치 동일 */
 .team-overview-empty{
-  grid-column:1/-1;padding:28px 16px;text-align:center;
-  border:1px dashed var(--line);border-radius:12px;color:var(--muted);font-size:13px
+  grid-column:1/-1;
+  padding:28px 16px;
+  text-align:center;
+  border:1px dashed var(--line);
+  border-radius:12px;
+  color:var(--muted);
+  font-size:13px;
 }
+
 .team-overview-error{
-  grid-column:1/-1;padding:14px;border-radius:11px;
-  background:var(--red-soft);color:#A71F2C;font-size:13px
+  grid-column:1/-1;
+  padding:14px;
+  border-radius:11px;
+  background:var(--red-soft);
+  color:#A71F2C;
+  font-size:13px;
 }
 
-/* 카드 폭이 좁아질 수 있는 노트북/확대 환경에서는 1열로 전환 */
-@media(max-width:1080px){
-  .team-overview-list{grid-template-columns:1fr}
+/* 두 칸 카드가 너무 좁아지는 시점부터 1열 */
+@media(max-width:1040px){
+  .team-overview-list{
+    grid-template-columns:1fr;
+  }
 }
 
-/* 모바일 */
+/* 모바일에서도 모든 카드의 칼럼 위치를 동일하게 유지하되 폭을 축소 */
 @media(max-width:620px){
-  .all-team-overview{padding:16px 14px;margin-top:18px}
-  .all-team-overview-head{display:block}
-  .all-team-overview-head h3{font-size:19px}
-  .all-team-overview-tools{margin-top:13px;width:100%}
-  .team-overview-card{padding:12px;min-height:0}
-  .team-overview-card.available{
-    grid-template-columns:minmax(0,1fr) auto;
-    grid-template-areas:
-      "name detail"
-      "result result";
-    gap:9px 10px;
+  .all-team-overview{
+    padding:16px 14px;
+    margin-top:18px;
   }
-  .team-overview-name{font-size:14px}
-  .team-overview-mbti{min-width:60px;height:36px}
+
+  .all-team-overview-head{
+    display:block;
+  }
+
+  .all-team-overview-head h3{
+    font-size:19px;
+  }
+
+  .all-team-overview-tools{
+    margin-top:13px;
+    width:100%;
+  }
+
+  .team-overview-card{
+    grid-template-columns:minmax(0,1fr) 62px 86px 64px !important;
+    column-gap:8px !important;
+    min-height:66px;
+    padding:10px 11px;
+  }
+
+  .team-overview-name{
+    font-size:13px;
+  }
+
+  .team-overview-mbti{
+    width:58px;
+    min-width:58px;
+    height:34px;
+    font-size:13px;
+  }
+
   .team-overview-temp{
-    margin-left:72px;
-    font-size:12px;
-    white-space:normal;
+    font-size:11.5px;
   }
+
   .team-overview-temp small{
-    display:inline;
-    margin-left:5px;
-    font-size:10.5px;
+    font-size:10px;
   }
-  .team-overview-detail{min-height:34px;padding:0 9px}
-  .team-overview-card.pending{
-    grid-template-columns:minmax(0,1fr) auto;
-    min-height:58px;
+
+  .team-overview-detail{
+    min-width:60px;
+    min-height:34px;
+    padding:0 6px;
+    font-size:11px;
+  }
+
+  .team-overview-pending-badge{
+    width:62px;
+    min-width:62px;
+    min-height:34px;
+    font-size:11px;
+  }
+}
+
+/* 아주 좁은 화면에서는 카드만 2행으로 재배치하되
+   모든 카드가 동일한 행/열 구조를 사용 */
+@media(max-width:430px){
+  .team-overview-card{
+    grid-template-columns:minmax(0,1fr) 62px 64px !important;
+    grid-template-rows:auto auto;
+    row-gap:8px !important;
+  }
+
+  .team-overview-name{
+    grid-column:1 / 3 !important;
+    grid-row:1 !important;
+  }
+
+  .team-overview-detail{
+    grid-column:3 !important;
+    grid-row:1 !important;
+  }
+
+  .team-overview-mbti,
+  .team-overview-pending-badge{
+    grid-column:1 !important;
+    grid-row:2 !important;
+  }
+
+  .team-overview-temp{
+    grid-column:2 / 4 !important;
+    grid-row:2 !important;
   }
 }
