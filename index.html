@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>MBTI로 보는 우리 팀(지부) 업무스타일 진단</title>
   <link rel="stylesheet" href="style.css?v=0.7.3" />
+  <link rel="stylesheet" href="team-overview.css?v=0.8.0.1" />
   <style>
     .mobile-title,.mobile-subtitle{display:none}
     @media(max-width:620px){
@@ -141,6 +142,22 @@
         <div id="teamRemoteStatus" class="nas-api-status"></div>
       </div>
 
+      <section class="all-team-overview" aria-labelledby="allTeamOverviewTitle">
+        <div class="all-team-overview-head">
+          <div>
+            <div class="eyebrow">팀(지부) 전체 보기</div>
+            <h3 id="allTeamOverviewTitle">팀(지부)별 대표 MBTI · 주요 기질</h3>
+            <p>3명 이상 참여한 팀(지부)은 대표 MBTI와 주요 기질이 표시됩니다. 참여 인원이 기준에 미달한 경우에는 ‘집계 중’으로 표시됩니다.</p>
+          </div>
+          <div class="all-team-overview-tools">
+            <label class="sr-only" for="teamOverviewSearch">팀(지부) 검색</label>
+            <input id="teamOverviewSearch" type="search" placeholder="팀(지부) 검색" autocomplete="off" />
+          </div>
+        </div>
+        <div id="teamOverviewMeta" class="team-overview-meta">전체 현황을 불러오는 중...</div>
+        <div id="teamOverviewList" class="team-overview-list" aria-live="polite"></div>
+      </section>
+
       <div class="team-entry manual-team-entry">
         <div class="team-entry-head">
           <div>
@@ -267,5 +284,6 @@
 
   <script src="config.js?v=0.6.12"></script>
   <script src="app.min.js?v=0.7.3"></script>
+  <script src="team-overview.js?v=0.8.0.1"></script>
 </body>
 </html>

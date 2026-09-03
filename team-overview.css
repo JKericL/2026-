@@ -1,0 +1,64 @@
+/* v0.8.0.1 · 공개용 팀(지부) 전체 대표 MBTI/주요기질 현황 */
+.sr-only{
+  position:absolute!important;width:1px!important;height:1px!important;padding:0!important;margin:-1px!important;
+  overflow:hidden!important;clip:rect(0,0,0,0)!important;white-space:nowrap!important;border:0!important
+}
+.all-team-overview{
+  margin:22px 0 0;padding:24px;
+  border:1px solid var(--line);border-radius:18px;background:#fff;
+  box-shadow:0 8px 24px rgba(33,64,154,.04)
+}
+.all-team-overview-head{display:flex;justify-content:space-between;align-items:flex-end;gap:22px;margin-bottom:14px}
+.all-team-overview-head .eyebrow{margin-bottom:7px}
+.all-team-overview-head h3{margin:0 0 8px;font-size:22px;line-height:1.4;color:var(--blue);letter-spacing:-.035em}
+.all-team-overview-head p{margin:0;color:var(--muted);font-size:13px;line-height:1.7}
+.all-team-overview-tools{flex:0 0 min(280px,34%)}
+.all-team-overview-tools input{
+  width:100%;min-height:44px;padding:0 13px;border:1px solid var(--line);border-radius:11px;
+  background:#FAFAFA;color:var(--text);font:inherit
+}
+.all-team-overview-tools input:focus{outline:2px solid var(--blue-40);border-color:transparent}
+.team-overview-meta{margin:2px 0 12px;font-size:12px;color:var(--muted)}
+.team-overview-list{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.team-overview-card{
+  display:grid;grid-template-columns:minmax(130px,1.4fr) 78px 110px auto;align-items:center;gap:12px;
+  min-height:72px;padding:13px 14px;border:1px solid var(--line);border-radius:13px;background:#fff
+}
+.team-overview-card.available{border-color:#D6DCEC;background:#FCFDFF}
+.team-overview-card.pending{background:#FAFAFA;color:var(--muted)}
+.team-overview-name{min-width:0;font-size:14px;font-weight:700;color:var(--dark);word-break:keep-all}
+.team-overview-card.available .team-overview-name{color:var(--text)}
+.team-overview-mbti{
+  justify-self:start;display:inline-flex;align-items:center;justify-content:center;min-width:64px;height:38px;
+  padding:0 9px;border-radius:9px;background:var(--blue);color:#fff;font-weight:800;letter-spacing:.04em
+}
+.team-overview-pending-badge{
+  display:inline-flex;align-items:center;min-height:34px;padding:0 9px;border-radius:9px;
+  background:var(--ivory);border:1px solid var(--line);color:var(--muted);font-size:12px;font-weight:700
+}
+.team-overview-temp{font-size:13px;color:var(--dark);font-weight:700;white-space:nowrap}
+.team-overview-temp small{display:block;margin-top:2px;color:var(--muted);font-size:11px;font-weight:500}
+.team-overview-detail{
+  justify-self:end;border:1px solid var(--blue-40);background:var(--blue-10);color:var(--blue);
+  min-height:36px;padding:0 11px;border-radius:9px;font-size:12px;font-weight:700;white-space:nowrap
+}
+.team-overview-detail:hover{background:#E5EAF5}
+.team-overview-empty{grid-column:1/-1;padding:28px 16px;text-align:center;border:1px dashed var(--line);border-radius:12px;color:var(--muted);font-size:13px}
+.team-overview-error{padding:14px;border-radius:11px;background:var(--red-soft);color:#A71F2C;font-size:13px}
+@media(max-width:900px){
+  .team-overview-list{grid-template-columns:1fr}
+}
+@media(max-width:620px){
+  .all-team-overview{padding:16px 14px;margin-top:18px}
+  .all-team-overview-head{display:block}
+  .all-team-overview-head h3{font-size:19px}
+  .all-team-overview-tools{margin-top:13px;width:100%}
+  .team-overview-card{grid-template-columns:minmax(0,1fr) auto auto;gap:8px 10px;padding:12px}
+  .team-overview-name{grid-column:1/-1;font-size:14px}
+  .team-overview-mbti{min-width:60px;height:36px}
+  .team-overview-temp{font-size:12px}
+  .team-overview-detail{min-height:34px;padding:0 9px}
+  .team-overview-card.pending{grid-template-columns:minmax(0,1fr) auto}
+  .team-overview-card.pending .team-overview-name{grid-column:1/2}
+  .team-overview-card.pending .team-overview-pending-badge{grid-column:2/3;grid-row:1}
+}

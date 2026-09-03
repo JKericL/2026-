@@ -1,0 +1,106 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>팀(지부) MBTI 관리자 현황</title>
+  <style>
+    :root{--blue:#21409A;--red:#ED1B2F;--bg:#F8F5EE;--text:#333438;--muted:#6E7075;--line:#E6E7E8;--surface:#fff;--blue10:#EEF1F8}
+    *{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--text);font-family:"Noto Sans KR","Malgun Gothic",sans-serif;letter-spacing:-.015em}
+    .wrap{width:min(1200px,calc(100% - 28px));margin:28px auto 60px}.head{display:flex;justify-content:space-between;gap:18px;align-items:flex-end;margin-bottom:18px}
+    .eyebrow{font-size:12px;font-weight:800;color:var(--blue);margin-bottom:7px}.head h1{margin:0 0 7px;color:var(--blue);font-size:30px}.head p{margin:0;color:var(--muted);font-size:13px}
+    .login,.toolbar,.tablebox,.stat{background:#fff;border:1px solid var(--line);border-radius:14px}.login{padding:18px;margin-bottom:16px;display:flex;gap:10px;align-items:center}.login input,.toolbar input,.toolbar select{min-height:42px;border:1px solid var(--line);border-radius:9px;padding:0 12px;font:inherit}.login input{flex:1}.btn{min-height:42px;border:0;border-radius:9px;padding:0 15px;background:var(--blue);color:#fff;font-weight:800;cursor:pointer}.btn.secondary{background:var(--blue10);color:var(--blue);border:1px solid #A6B3D7}
+    .msg{font-size:12px;color:var(--muted);margin-left:4px}.msg.error{color:#B12A36}.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:14px}.stat{padding:18px}.stat b{display:block;font-size:27px;color:var(--blue)}.stat span{font-size:12px;color:var(--muted)}
+    .toolbar{display:flex;gap:10px;align-items:center;padding:13px;margin-bottom:12px}.toolbar input{flex:1}.tablebox{overflow:auto}.table{width:100%;border-collapse:collapse;min-width:850px}.table th,.table td{padding:12px 13px;border-bottom:1px solid var(--line);text-align:left;font-size:13px;vertical-align:top}.table th{position:sticky;top:0;background:#FAFAFA;color:var(--muted);font-size:12px}.table tr:last-child td{border-bottom:0}.mbti{display:inline-block;padding:5px 8px;border-radius:7px;background:var(--blue);color:#fff;font-weight:800}.pending{color:var(--muted)}.composition{max-width:440px;line-height:1.6}.hidden{display:none!important}
+    .security{margin-top:12px;color:var(--muted);font-size:11px;line-height:1.6}.updated{font-size:12px;color:var(--muted);margin:10px 2px}
+    @media(max-width:700px){.head{display:block}.stats{grid-template-columns:1fr 1fr}.login,.toolbar{flex-wrap:wrap}.login input,.toolbar input{flex:1 1 100%}.wrap{width:calc(100% - 20px);margin-top:16px}.head h1{font-size:25px}}
+  </style>
+</head>
+<body>
+  <main class="wrap">
+    <div class="head">
+      <div><div class="eyebrow">관리자 전용</div><h1>팀(지부) MBTI 전체 현황</h1><p>참여 현황과 팀별 MBTI 구성까지 한 화면에서 확인합니다.</p></div>
+    </div>
+
+    <section id="loginBox" class="login">
+      <input id="adminKey" type="password" placeholder="관리자 키 입력" autocomplete="current-password" />
+      <button id="loadAdmin" class="btn" type="button">현황 불러오기</button>
+      <span id="loginMsg" class="msg"></span>
+    </section>
+
+    <section id="dashboard" class="hidden">
+      <div class="stats">
+        <div class="stat"><b id="statResponses">0</b><span>총 참여 결과</span></div>
+        <div class="stat"><b id="statParticipating">0</b><span>참여 팀(지부)</span></div>
+        <div class="stat"><b id="statPublished">0</b><span>3명 이상 결과 공개</span></div>
+        <div class="stat"><b id="statTotalTeams">0</b><span>전체 팀(지부)</span></div>
+      </div>
+      <div class="toolbar">
+        <input id="adminSearch" type="search" placeholder="팀(지부) 검색" />
+        <select id="adminFilter"><option value="all">전체</option><option value="participating">참여 중</option><option value="published">3명 이상</option><option value="pending">3명 미만</option><option value="zero">미참여</option></select>
+        <button id="downloadCsv" class="btn secondary" type="button">CSV 다운로드</button>
+      </div>
+      <div id="updated" class="updated"></div>
+      <div class="tablebox">
+        <table class="table">
+          <thead><tr><th>팀(지부)</th><th>참여</th><th>대표 MBTI</th><th>주요 기질</th><th>MBTI 구성</th><th>공개 상태</th></tr></thead>
+          <tbody id="adminRows"></tbody>
+        </table>
+      </div>
+    </section>
+    <p class="security">※ 이 페이지 주소 자체는 공개될 수 있으나, 전체 현황 데이터는 관리자 키가 맞아야 서버에서 반환됩니다. 관리자 키는 브라우저 세션에만 보관되며 GitHub 파일에 저장하지 않습니다.</p>
+  </main>
+
+  <script src="config.js?v=0.8.0.1"></script>
+  <script>
+  (()=>{
+    const base=String((window.MBTI_CONFIG||{}).API_BASE_URL||'').replace(/\/$/,'');
+    let data=null;
+    const $=id=>document.getElementById(id);
+    const esc=v=>String(v??'').replace(/[&<>"']/g,ch=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[ch]));
+    const tempNames={SJ:'관리자형',SP:'실행가형',NT:'전략가형',NF:'조정자형'};
+
+    async function load(){
+      const key=$('adminKey').value.trim()||sessionStorage.getItem('teamMbtiAdminKey')||'';
+      if(!key){$('loginMsg').textContent='관리자 키를 입력해 주세요.';$('loginMsg').className='msg error';return;}
+      $('loginMsg').textContent='조회 중...';$('loginMsg').className='msg';
+      try{
+        const res=await fetch(base+'/api/admin/overview',{headers:{'X-Admin-Key':key}});
+        const obj=await res.json().catch(()=>({}));
+        if(!res.ok) throw new Error(obj.error||'HTTP_'+res.status);
+        sessionStorage.setItem('teamMbtiAdminKey',key); data=obj;
+        $('loginMsg').textContent='';$('dashboard').classList.remove('hidden');
+        $('statResponses').textContent=obj.total_responses;$('statParticipating').textContent=obj.participating_teams;$('statPublished').textContent=obj.publishable_teams;$('statTotalTeams').textContent=obj.total_teams;
+        $('updated').textContent=obj.last_updated?`최근 응답 기준 · ${new Date(obj.last_updated*1000).toLocaleString('ko-KR')}`:'아직 제출된 응답이 없습니다.';
+        render();
+      }catch(e){$('dashboard').classList.add('hidden');$('loginMsg').textContent=e.message==='ADMIN_NOT_CONFIGURED'?'서버에 관리자 키가 아직 설정되지 않았습니다.':'관리자 키가 맞지 않거나 서버에 연결할 수 없습니다.';$('loginMsg').className='msg error';}
+    }
+    function filtered(){
+      if(!data) return [];
+      const q=$('adminSearch').value.trim().toLowerCase(), f=$('adminFilter').value, min=data.min_required||3;
+      return data.teams.filter(r=>{
+        if(q&&!r.team_name.toLowerCase().includes(q)) return false;
+        if(f==='participating'&&r.total<=0)return false;if(f==='published'&&r.total<min)return false;if(f==='pending'&&!(r.total>0&&r.total<min))return false;if(f==='zero'&&r.total!==0)return false;
+        return true;
+      });
+    }
+    function render(){
+      const min=data.min_required||3;
+      $('adminRows').innerHTML=filtered().map(r=>{
+        const comp=Object.entries(r.counts||{}).sort((a,b)=>b[1]-a[1]||a[0].localeCompare(b[0])).map(([t,n])=>`${t} ${n}명`).join(' · ')||'-';
+        return `<tr><td><b>${esc(r.team_name)}</b></td><td>${r.total}명</td><td>${r.representative_mbti?`<span class="mbti">${esc(r.representative_mbti)}</span>`:'-'}</td><td>${r.temperament?`${esc(r.temperament)} · ${esc(tempNames[r.temperament]||'')}`:'-'}</td><td class="composition">${esc(comp)}</td><td class="${r.total>=min?'':'pending'}">${r.total>=min?'공개':'집계 중'}</td></tr>`;
+      }).join('')||'<tr><td colspan="6" class="pending">조건에 맞는 팀(지부)이 없습니다.</td></tr>';
+    }
+    function csv(){
+      const rows=[['팀(지부)','참여인원','대표 MBTI','주요 기질','MBTI 구성','공개 상태']];
+      const min=data.min_required||3;
+      filtered().forEach(r=>rows.push([r.team_name,r.total,r.representative_mbti||'',r.temperament||'',Object.entries(r.counts||{}).sort((a,b)=>b[1]-a[1]).map(([t,n])=>`${t} ${n}명`).join(' · '),r.total>=min?'공개':'집계 중']));
+      const text='\ufeff'+rows.map(row=>row.map(v=>'"'+String(v).replace(/"/g,'""')+'"').join(',')).join('\r\n');
+      const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([text],{type:'text/csv;charset=utf-8'}));a.download='team_mbti_admin_overview.csv';a.click();setTimeout(()=>URL.revokeObjectURL(a.href),1000);
+    }
+    $('loadAdmin').onclick=load;$('adminKey').addEventListener('keydown',e=>{if(e.key==='Enter')load();});$('adminSearch').addEventListener('input',render);$('adminFilter').addEventListener('change',render);$('downloadCsv').onclick=csv;
+    const saved=sessionStorage.getItem('teamMbtiAdminKey');if(saved)$('adminKey').value=saved;
+  })();
+  </script>
+</body>
+</html>
