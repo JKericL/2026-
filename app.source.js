@@ -172,6 +172,21 @@ const questionVisuals = {
   19:{src:"assets/question-20.png", alt:"20번 문항 상황 이미지"}
 };
 
+/* v0.8.0.4 · 문항 이미지 체감 로딩 개선
+   - 현재 문항 선택 시 전체 문항을 다시 렌더링하지 않아 같은 이미지가 재생성/재디코딩되는 현상 방지
+   - 다음 문항 이미지를 브라우저 캐시에 미리 로드 */
+const questionVisualPreloadCache = new Map();
+
+function preloadQuestionVisual(index){
+  const visual = questionVisuals[index];
+  if(!visual || questionVisualPreloadCache.has(visual.src)) return;
+
+  const img = new Image();
+  img.decoding = "async";
+  img.src = visual.src;
+  questionVisualPreloadCache.set(visual.src, img);
+}
+
 function renderQuiz(){
   const quiz = document.getElementById("quiz");
   const x = questions[currentQuestion];
@@ -185,11 +200,11 @@ function renderQuiz(){
       <div class="question-visual-placeholder" ${visualHidden}>
         <div class="question-visual-box ${visual ? "has-image" : ""}">
           ${visual ? `
-            <img class="question-visual-image" src="${visual.src}" alt="${visual.alt}">
+            <img class="question-visual-image" src="${visual.src}" alt="${visual.alt}" decoding="async">
           ` : `
             <div class="visual-box-inner">
               <span class="visual-frame"></span>
-              <img class="mascot-preview" src="assets/duck-mascot.png" alt="오리 마스코트 예시">
+              <img class="mascot-preview" src="assets/duck-mascot.png" alt="오리 마스코트 예시" decoding="async">
               <div class="visual-title">오리 마스코트 활용 이미지 영역</div>
               <div class="visual-caption">모바일 기준 세로형 이미지로 구성하고, 문항별 상황에 맞춰 오리 마스코트를 활용할 수 있습니다.</div>
             </div>
@@ -212,13 +227,24 @@ function renderQuiz(){
       </div>
     </div>`;
 
+  const optionLabels=[...quiz.querySelectorAll(".options-three .option")];
   quiz.querySelectorAll('input[name="currentQuestion"]').forEach(input=>{
     input.addEventListener("change",()=>{
       personalAnswers[currentQuestion] = Number(input.value);
-      renderQuiz();
+
+      // 선택 상태만 갱신하고 문항 전체는 다시 만들지 않는다.
+      // 큰 PNG 이미지가 같은 문항에서 반복 재생성/재디코딩되는 현상을 방지한다.
+      optionLabels.forEach(label=>{
+        const radio=label.querySelector('input[name="currentQuestion"]');
+        label.classList.toggle("selected",Boolean(radio?.checked));
+      });
+
       updateProgress();
     });
   });
+
+  // 사용자가 '다음'을 누르기 전에 다음 문항 이미지를 브라우저 캐시에 미리 준비한다.
+  preloadQuestionVisual(currentQuestion+1);
 
   document.getElementById("prevQuestion").disabled = currentQuestion === 0;
   const next = document.getElementById("nextQuestion");
