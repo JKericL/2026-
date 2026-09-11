@@ -150,26 +150,26 @@ const personalAnswers = Array(questions.length).fill(null);
 const axisVisualLabels={EI:"소통 · 협업 상황",SN:"기획 · 문서 상황",TF:"피드백 · 관계 상황",JP:"일정 · 실행 상황"};
 
 const questionVisuals = {
-  0:{src:"assets/question-01.png", alt:"1번 문항 상황 이미지"},
-  1:{src:"assets/question-02.png", alt:"2번 문항 상황 이미지"},
-  2:{src:"assets/question-03.png", alt:"3번 문항 상황 이미지"},
-  3:{src:"assets/question-04.png", alt:"4번 문항 상황 이미지"},
-  4:{src:"assets/question-05.png", alt:"5번 문항 상황 이미지"},
-  5:{src:"assets/question-06.png", alt:"6번 문항 상황 이미지"},
-  6:{src:"assets/question-07.png", alt:"7번 문항 상황 이미지"},
-  7:{src:"assets/question-08.png", alt:"8번 문항 상황 이미지"},
-  8:{src:"assets/question-09.png", alt:"9번 문항 상황 이미지"},
-  9:{src:"assets/question-10.png", alt:"10번 문항 상황 이미지"},
-  10:{src:"assets/question-11.png", alt:"11번 문항 상황 이미지"},
-  11:{src:"assets/question-12.png", alt:"12번 문항 상황 이미지"},
-  12:{src:"assets/question-13.png", alt:"13번 문항 상황 이미지"},
-  13:{src:"assets/question-14.png", alt:"14번 문항 상황 이미지"},
-  14:{src:"assets/question-15.png", alt:"15번 문항 상황 이미지"},
-  15:{src:"assets/question-16.png", alt:"16번 문항 상황 이미지"},
-  16:{src:"assets/question-17.png", alt:"17번 문항 상황 이미지"},
-  17:{src:"assets/question-18.png", alt:"18번 문항 상황 이미지"},
-  18:{src:"assets/question-19.png", alt:"19번 문항 상황 이미지"},
-  19:{src:"assets/question-20.png", alt:"20번 문항 상황 이미지"}
+  0:{src:"assets/question-01.webp", alt:"1번 문항 상황 이미지"},
+  1:{src:"assets/question-02.webp", alt:"2번 문항 상황 이미지"},
+  2:{src:"assets/question-03.webp", alt:"3번 문항 상황 이미지"},
+  3:{src:"assets/question-04.webp", alt:"4번 문항 상황 이미지"},
+  4:{src:"assets/question-05.webp", alt:"5번 문항 상황 이미지"},
+  5:{src:"assets/question-06.webp", alt:"6번 문항 상황 이미지"},
+  6:{src:"assets/question-07.webp", alt:"7번 문항 상황 이미지"},
+  7:{src:"assets/question-08.webp", alt:"8번 문항 상황 이미지"},
+  8:{src:"assets/question-09.webp", alt:"9번 문항 상황 이미지"},
+  9:{src:"assets/question-10.webp", alt:"10번 문항 상황 이미지"},
+  10:{src:"assets/question-11.webp", alt:"11번 문항 상황 이미지"},
+  11:{src:"assets/question-12.webp", alt:"12번 문항 상황 이미지"},
+  12:{src:"assets/question-13.webp", alt:"13번 문항 상황 이미지"},
+  13:{src:"assets/question-14.webp", alt:"14번 문항 상황 이미지"},
+  14:{src:"assets/question-15.webp", alt:"15번 문항 상황 이미지"},
+  15:{src:"assets/question-16.webp", alt:"16번 문항 상황 이미지"},
+  16:{src:"assets/question-17.webp", alt:"17번 문항 상황 이미지"},
+  17:{src:"assets/question-18.webp", alt:"18번 문항 상황 이미지"},
+  18:{src:"assets/question-19.webp", alt:"19번 문항 상황 이미지"},
+  19:{src:"assets/question-20.webp", alt:"20번 문항 상황 이미지"}
 };
 
 /* v0.8.0.4 · 문항 이미지 체감 로딩 개선
@@ -623,12 +623,23 @@ function analyzeTeam(){
     tempCounts[getTemperament(type)]+=n;
   });
 
+  const axisPairs=[["E","I"],["S","N"],["T","F"],["J","P"]];
+  const axisTies=axisPairs
+    .filter(([a,b])=>counts[a]===counts[b] && counts[a]>0)
+    .map(([a,b])=>`${a}/${b}`);
+
+  // 기존 대표값 산출 방식은 유지하되, 동률인 축은 결과 화면에 별도로 명시한다.
   const teamType =
     (counts.E>counts.I?"E":"I")+
     (counts.S>counts.N?"S":"N")+
     (counts.T>counts.F?"T":"F")+
     (counts.J>counts.P?"J":"P");
-  const topTemp=Object.entries(tempCounts).sort((a,b)=>b[1]-a[1])[0][0];
+
+  const maxTemp=Math.max(...Object.values(tempCounts));
+  const tiedTemps=Object.entries(tempCounts)
+    .filter(([,v])=>v===maxTemp && v>0)
+    .map(([k])=>k);
+  const topTemp=tiedTemps[0];
   const info=typeInfo[teamType], tinfo=temperamentInfo[topTemp];
   const dist=Object.entries(tempCounts).sort((a,b)=>b[1]-a[1]).map(([k,v])=>`${k} ${Math.round(v/total*100)}%`).join(" · ");
   const composition=Object.entries(teamCounts)
@@ -636,29 +647,45 @@ function analyzeTeam(){
     .sort((a,b)=>b[1]-a[1] || a[0].localeCompare(b[0]))
     .map(([t,n])=>`${t} ${n}명`).join(" · ");
 
+  const mbtiTieHtml=axisTies.length
+    ? `<p class="balance-note">※ 동률 지표 : ${axisTies.map(x=>`${x} 동률(각 50%)`).join(" · ")} · 대표 MBTI는 참고값으로 표시됩니다.</p>`
+    : "";
+
+  const temperamentTitle=tiedTemps.length>1
+    ? `주요 기질 동률 · ${tiedTemps.map(k=>`${k} · ${temperamentInfo[k].name}`).join(" / ")}`
+    : `주요 기질 ${topTemp} · ${tinfo.name}`;
+
+  const temperamentDesc=tiedTemps.length>1
+    ? `${tiedTemps.map(k=>`${k} ${temperamentInfo[k].name}`).join("과 ")}이 동일 비율로 나타났습니다.`
+    : tinfo.desc;
+
+  const tiedTempGoods=[...new Set(tiedTemps.flatMap(k=>temperamentInfo[k].good))];
+  const tiedTempWatch=[...new Set(tiedTemps.flatMap(k=>temperamentInfo[k].watch))];
+
   box.innerHTML=`
     <div class="result-top team-result-top">
       <div class="type-badge">${teamType}</div>
       <div class="result-title team-result-title">
-        <h3>대표 MBTI : ${teamType}<span class="team-result-name">(${info.name})</span></h3>
+        <h3>${axisTies.length ? "대표 MBTI(참고)" : "대표 MBTI"} : ${teamType}<span class="team-result-name">(${info.name})</span></h3>
         <p class="team-composition">구성 : ${composition}</p>
+        ${mbtiTieHtml}
       </div>
     </div>
     ${axisHtml(counts)}
     <div class="kiersey">
-      <b>주요 기질 ${topTemp} · ${tinfo.name}</b>
+      <b>${temperamentTitle}</b>
       <p class="temperament-note">업무기질은 구성원의 MBTI를 4개 유형(SJ·SP·NT·NF)으로 묶어 팀(지부)의 전반적인 업무성향을 살펴보는 참고 지표입니다. 대표 MBTI와는 별도의 보조 분석 결과입니다.</p>
-      <span>${tinfo.desc}</span>
+      <span>${temperamentDesc}</span>
       <div style="margin-top:8px;font-size:12px;color:#5b6c64">기질 분포 · ${dist}</div>
     </div>
     <div class="dual" style="margin-top:14px">
       <div class="mini good">
         <h4>우리 팀(지부)이 살릴 수 있는 강점</h4>
-        <ul>${[...new Set([...tinfo.good,...info.good])].slice(0,5).map(x=>`<li>${x}</li>`).join("")}</ul>
+        <ul>${[...new Set([...tiedTempGoods,...info.good])].slice(0,5).map(x=>`<li>${x}</li>`).join("")}</ul>
       </div>
       <div class="mini watch">
         <h4>우리 팀(지부)의 점검이 필요한 부분</h4>
-        <ul>${[...new Set([...tinfo.watch,...info.watch])].slice(0,5).map(x=>`<li>${x}</li>`).join("")}</ul>
+        <ul>${[...new Set([...tiedTempWatch,...info.watch])].slice(0,5).map(x=>`<li>${x}</li>`).join("")}</ul>
       </div>
     </div>
     <div class="example-box" style="margin-top:14px">
