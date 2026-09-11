@@ -652,7 +652,7 @@ function analyzeTeam(){
     : "";
 
   const temperamentTitle=tiedTemps.length>1
-    ? `주요 기질 동률 · ${tiedTemps.map(k=>`${k} · ${temperamentInfo[k].name}`).join(" / ")}`
+    ? `주요 기질 ${tiedTemps.map(k=>`${k} · ${temperamentInfo[k].name}`).join(" / ")} (동률)`
     : `주요 기질 ${topTemp} · ${tinfo.name}`;
 
   const temperamentDesc=tiedTemps.length>1
