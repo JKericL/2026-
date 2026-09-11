@@ -652,8 +652,8 @@ function analyzeTeam(){
     : "";
 
   const temperamentTitle=tiedTemps.length>1
-    ? `주요 기질 ${tiedTemps.map(k=>`${k} · ${temperamentInfo[k].name}`).join(" / ")} (동률)`
-    : `주요 기질 ${topTemp} · ${tinfo.name}`;
+    ? `주요 기질 : ${tiedTemps.map(k=>`${k} · ${temperamentInfo[k].name}`).join(" / ")} (동률)`
+    : `주요 기질 : ${topTemp} · ${tinfo.name}`;
 
   const temperamentDesc=tiedTemps.length>1
     ? `${tiedTemps.map(k=>`${k} ${temperamentInfo[k].name}`).join("과 ")}이 동일 비율로 나타났습니다.`
