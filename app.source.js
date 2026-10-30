@@ -487,7 +487,14 @@ async function submitPersonalResult(type){
     });
     if(status){status.textContent=`팀 집계 반영 완료 · 현재 ${data.team_total}명 참여`;status.className="remote-submit-status";}
   }catch(err){
-    if(status){status.textContent="개인 결과는 정상 산출되었지만 NAS 팀 집계 전송에는 실패했습니다.";status.className="remote-submit-status error";}
+    if(status){
+      if(err?.message==="CAMPAIGN_CLOSED"){
+        status.textContent="캠페인이 종료되어 결과를 제출할 수 없습니다. 참여해 주셔서 감사합니다.";
+      }else{
+        status.textContent="개인 결과는 정상 산출되었지만 NAS 팀 집계 전송에는 실패했습니다.";
+      }
+      status.className="remote-submit-status error";
+    }
   }
 }
 
