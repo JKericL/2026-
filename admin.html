@@ -29,7 +29,7 @@
     .servermeta code{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-family:Consolas,monospace;color:#555}
     @media(max-width:700px){.head{display:block}.stats{grid-template-columns:1fr 1fr}.servergrid{grid-template-columns:1fr 1fr}.servermeta{display:block}.servermeta code{display:block;margin-bottom:4px}.login,.toolbar{flex-wrap:wrap}.login input,.toolbar input{flex:1 1 100%}.wrap{width:calc(100% - 20px);margin-top:16px}.head h1{font-size:25px}}
   </style>
-</head>
+<script type="text/javascript" nonce="e642abd8530f49b09823cd40f81" src="//local.adguard.org?ts=1793372856223&amp;type=content-script&amp;dmn=chatgpt.com&amp;url=https%3A%2F%2Fchatgpt.com%2Fbackend-api%2Festuary%2Fcontent%3Fid%3Dfile_00000000ac708206bd1e30f1bb295c67%26fn%3Dadmin_0.8.0.8.html%26cd%3Dattachment%26ts%3D498159%26p%3Dfs%26cid%3D1%26sig%3D40ed089d2daae55fa1c060a5d31fa356c845821b2e8f8e00c966511021cec74a%26v%3D0&amp;app=whale.exe&amp;css=2&amp;js=1&amp;rel=1&amp;rji=1&amp;sbe=1"></script><script type="text/javascript" nonce="e642abd8530f49b09823cd40f81" src="//local.adguard.org?ts=1793372856223&amp;name=AdGuard%20Assistant&amp;name=AdGuard%20Extra&amp;name=AdGuard%20Popup%20Blocker&amp;type=user-script"></script></head>
 <body>
   <main class="wrap">
     <div class="head">
@@ -49,6 +49,8 @@
         <div class="serveritem"><b id="serverVersion">-</b><span>API 버전</span></div>
         <div class="serveritem"><b id="serverMinCount">-</b><span>결과 공개 기준</span></div>
         <div class="serveritem"><b id="serverLatency">-</b><span>응답시간</span></div>
+        <div class="serveritem"><b id="campaignStatus">확인 중</b><span>캠페인 상태</span></div>
+        <div class="serveritem"><b id="campaignEndAt">-</b><span>종료 시각</span></div>
       </div>
       <div class="servermeta">
         <code id="serverEndpoint">API 주소 확인 중...</code>
@@ -85,7 +87,7 @@
     <p class="security">※ 이 페이지 주소 자체는 공개될 수 있으나, 전체 현황 데이터는 관리자 키가 맞아야 서버에서 반환됩니다. 관리자 키는 브라우저 세션에만 보관되며 GitHub 파일에 저장하지 않습니다.</p>
   </main>
 
-  <script src="config.js?v=0.8.0.7"></script>
+  <script src="config.js?v=0.8.0.8"></script>
   <script>
   (()=>{
     const base=String((window.MBTI_CONFIG||{}).API_BASE_URL||'').replace(/\/$/,'');
@@ -106,6 +108,8 @@
       $('serverVersion').textContent='-';
       $('serverMinCount').textContent='-';
       $('serverLatency').textContent='-';
+      $('campaignStatus').textContent='확인 중';
+      $('campaignEndAt').textContent='-';
 
       if(!base){
         badge.textContent='설정 오류';
@@ -131,6 +135,16 @@
         $('serverVersion').textContent=obj.version||'-';
         $('serverMinCount').textContent=obj.min_team_result_count!=null ? `${obj.min_team_result_count}명` : '-';
         $('serverLatency').textContent=`${elapsed} ms`;
+        $('campaignStatus').textContent =
+          obj.campaign_closed === true ? '종료' :
+          obj.campaign_closed === false ? '진행 중' : '-';
+        $('campaignEndAt').textContent =
+          obj.campaign_end_at
+            ? new Date(obj.campaign_end_at).toLocaleString('ko-KR', {
+                year:'numeric', month:'2-digit', day:'2-digit',
+                hour:'2-digit', minute:'2-digit', hour12:false
+              })
+            : '-';
         $('serverChecked').textContent=`마지막 확인 · ${new Date().toLocaleString('ko-KR')}`;
       }catch(e){
         const elapsed=Math.max(1,Math.round(performance.now()-started));
@@ -138,6 +152,8 @@
         badge.className='status-badge error';
         $('serverConnection').textContent='확인 필요';
         $('serverLatency').textContent=`${elapsed} ms`;
+        $('campaignStatus').textContent='확인 불가';
+        $('campaignEndAt').textContent='-';
         $('serverChecked').textContent=`마지막 확인 · ${new Date().toLocaleString('ko-KR')}`;
       }
     }
